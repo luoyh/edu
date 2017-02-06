@@ -25,6 +25,7 @@ public class SubjectController extends BaseController {
 	
 	@RequestMapping(value = "/insert", method = RequestMethod.POST)
 	public ResponseEntity<HttpResult> insert(Subject subject) {
+		System.out.println(subject.getName());
 		if (StringUtils.isBlank(subject.getName())) {
 			return ok(new HttpResult(HttpResult.ERR, "科目名称不能为空"));
 		}

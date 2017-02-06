@@ -30,13 +30,13 @@
 			  <div class="form-group">
 			    <label class="col-md-2 control-label">试卷名称</label>
 			    <div class="col-md-10">
-			      <input type="text" class="form-control" placeholder="text">
+			      <input v-model="suites.title" type="text" class="form-control" placeholder="text">
 			    </div>
 			  </div>
 			  <div class="form-group">
 			    <label class="col-md-2 control-label">所属科目</label>
 			    <div class="col-md-10">
-			    	<select class="form-control">
+			    	<select v-model="suites.subjectId" class="form-control">
 			    		<option value="1">语文</option>
 			    		<option value="2">数学</option>
 			    		<option value="3">英语</option>
@@ -48,9 +48,9 @@
 			    <label class="col-md-2 control-label">年月份</label>
 			    <div class="input-group">
 			      <div class="input-group-addon">年</div>
-			      <input type="text" class="form-control">
+			      <input v-model="suites.years" type="text" class="form-control">
 			      <div class="input-group-addon">月</div>
-			      <input type="text" class="form-control">
+			      <input v-model="suites.months" type="text" class="form-control">
 			    </div>
 			  </div>
 			  <div class="form-group">
@@ -67,12 +67,12 @@
 			  <div class="form-group">
 			  	<label for="" class="col-md-2 control-label">试卷总分数</label>
 			  	<div class="col-md-10">
-			  		<input type="text" readonly value="99" class="form-control">
+			  		<input type="text" readonly class="form-control">
 			  	</div>
 			  </div>
 			  <div class="form-group">
 			    <div class="col-md-offset-2 col-md-10">
-			      <button type="button" class="btn btn-primary">保存</button>
+			      <button v-on:click="insert" type="button" class="btn btn-primary">保存</button>
 			      <button v-on:click="back" type="button" class="btn">取消</button>
 			    </div>
 			  </div>
@@ -186,12 +186,39 @@
 <script>
 
 var uphtm = function(id) {
-	return '<div class="form-horizontal"><div class="form-group"><label class="col-md-4 control-label">选择图片:</label><div class="col-md-8"><input type="file" id="'+id+'" class="form-control"></div></div><div class="form-group m10t center"><button type="button" class="btn btn-default cancel">取消</button><button type="button" class="btn btn-primary upload">上传</button></div></div>'';
+	return '<div class="col-md-12"><div class="form-horizontal"><div class="form-group"><label class="col-md-4 control-label">选择图片:</label><div class="col-md-8"><input name="file" type="file" id="'+id+'" class="form-control"></div></div><div class="form-group m10t center"><button type="button" class="btn btn-default cancel m10r">取消</button><button type="button" class="btn btn-primary upload">上传</button></div></div></div>';
 };
 
 var up = function(t) {
+  var id = 'up_file_'+new Date().getTime();
 	//<div class="form-horizontal"><div class="form-group"><label class="col-md-4 control-label">选择图片:</label><div class="col-md-8"><input type="file" id="slt_file" class="form-control"></div></div><div class="form-group m10t center"><button type="button" class="btn btn-default cancel">取消</button><button type="button" class="btn btn-primary upload">上传</button></div></div>
-	uphtm();
+  layer.open({
+    type: 1,
+    area: ['420px', '170px'], //宽高
+    content: uphtm(id),
+    success: function(layero, index) {
+      layero.find('.upload').on('click', function() {
+        if ($('#'+id).val() == '') {
+          layer.msg('请选择文件');
+        } else {
+          $.ajaxFileUpload({
+            url: root + '/admin/suite/upload',
+            fileElementId: id,
+            secureuri: false,
+            dataType: 'json',
+            success: function(r) {
+              if (r.code == 200) {
+                $(t==0?'#qstn_image':'#qstn_ass_image').val(r.msg);
+                layer.close(index);
+              } else {
+                layer.msg(r.msg);
+              }
+            }
+          });
+        }
+      });
+    }
+  });
 };
 
   layui.use(['element','layer'], function() {
@@ -203,12 +230,16 @@ var up = function(t) {
       		$('#qstn_code').val(opts.code || '');
       		$('#qstn_type').val(opts.type || 1);
       		$('#qstn_title').val(opts.title || '');
+          $('#qstn_image').val(opts.image || '');
+          $('#qstn_ass_image').val(opts.assImage || '');
       		//$('#qstn_imagep').html('<input id="qstn_image" type="file" class="form-control">');
       		$('#qstn_image').data('path', opts.image || '');
       		//$('#qstn_ass_imagep').html('<input id="qstn_ass_image" type="file" class="form-control">');
       		$('#qstn_ass_image').data('path', opts.assImage || '');
       		$('#qstn_score').val(opts.score || '');
+          $('#qstn_desc').val(opts.description || '');
       		if (opts.type == 1 || opts.type == 2) {
+            $('#opts_div').show();
       			var htm = '';
       			$.each(JSON.parse(opts.options), function(i, e) {
       				if (i == 0) {
@@ -227,7 +258,13 @@ var up = function(t) {
       			});
       			$('#qoptions').html(htm);
       			optsRefresh(JSON.parse(opts.answers));
-      		} else {
+      		} else if(opts.type == 3) {
+            var r = JSON.parse(opts.answers)[0];
+            $('#answers').html('<label><input '+(r==0?'checked':'')+' name="v_q" type="radio" value="0">正确</label><label><input name="v_q" '+(r==1?'checked':'')+' type="radio" value="1">错误</label>');
+            $('#opts_div').hide();
+          } else {
+            $('#opts_div').hide();
+            $('#answers').html('<textarea rows="2" class="form-control"></textarea>');
       			$('#answers textarea').val(JSON.parse(opts.answers||'[]')[0]||'');
       		}
 
@@ -261,11 +298,11 @@ var up = function(t) {
       				code: code,
       				type: qstnType,
       				title: $('#qstn_title').val(),
-      				image: $('#qstn_image').data('path'),
+      				image: $('#qstn_image').val(),
       				options: JSON.stringify(options),
       				answers: JSON.stringify(answers),
       				description: $('#qstn_desc').val(),
-      				assImage: $('#qstn_ass_image').data('path'),
+      				assImage: $('#qstn_ass_image').val(),
       				score: $('#qstn_score').val()
       			});
       			console.log(JSON.parse(JSON.stringify(vm.questions)));
@@ -297,7 +334,7 @@ var up = function(t) {
       			$(e).find('.opts').text(t);
       			if (answers && answers.length > 0) {
       				for(var a in answers) {
-	      				if (answers[a] == v) {
+	      				if (answers[a] == t) {
 	      					ck = true;
 	      					break;
 	      				}
@@ -315,28 +352,17 @@ var up = function(t) {
 				  	</div>');
       		optsRefresh();
       	});
-        var 
+        //var 
           vm = new Vue({
             el: '#app',
             data: {
-              suites: [
-                {
-                  title: '二零一七年高三第一模拟考试',
-                  subject: '语文',
-                  date: '2017年3月',
-                  questions: 181,
-                  created: '2012-11-01 12:00:11'
-                },
-                {
-                  title: '二零一七年高三第三模拟考试',
-                  subject: '数学',
-                  date: '2017年11月',
-                  questions: 219,
-                  created: '2012-11-01 12:00:11'
-                }
-              ],
-              questions: [
-              ]
+              suites: {
+                title: '',
+                subjectId: 1,
+                years: '',
+                months: ''
+              },
+              questions: []
             },
             methods: {
               add: function() {
@@ -367,6 +393,17 @@ var up = function(t) {
             			  console.log(r);
             		  }
             	  });
+              },
+              insert: function() {
+                var that = this;
+                $.ajax({
+                  url: root + '/admin/suite/insert',
+                  method: 'POST',
+                  data: {suite: JSON.stringify(that.suites), questions: JSON.stringify(that.questions)},
+                  success: function(r) {
+                    console.log(r);
+                  }
+                });
               }
             } // end methods
           });
