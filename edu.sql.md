@@ -41,6 +41,7 @@ create table drill_record (
 	member_id bigint  not null,
 	type tinyint not null comment '0:order,1:suite,2:wrong',
 	result tinyint not null comment '0:void,1:incertitude,2:bingo,3:wrong,4:part',
+	subject_id bigint not null,
 	suite_id bigint  not null,
 	question_id bigint  not null,
 	answers json,
@@ -94,8 +95,7 @@ create table suite (
 	subject_id int not null comment '所属科目',
 	gmt_created datetime not null,
 	gmt_modified datetime not null,
-	primary key(id),
-	unique index sub_title(subject_id, title)
+	primary key(id)
 ) engine=innodb default charset=utf8;
 ```
 
