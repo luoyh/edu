@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.roy.wx.dao.SuiteMapper">
+
+	<select id="page" parameterType="com.edu.roy.wx.comm.Page" resultType="Suite">
+		select s.*,sb.name subject FROM suite s join subject sb on s.subject_id=sb.id where 1=1 
+		<if test="param.years > 0">
+			and s.years = #{param.years}
+		</if>
+		<if test="param.months > 0">
+			and s.months = #{param.months}
+		</if>
+		<if test="param.title != null">
+		 and s.title like concat('%', #{param.title}, '%')
+		</if>
+		<if test="param.subject > 0">
+			and s.subject_id=#{param.subject}
+		</if>
+	</select>
+
+</mapper>

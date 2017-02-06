@@ -26,13 +26,12 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="s in subjects">
-                <td v-text="s.id"></td>
-                <td v-text="s.name"></td>
-                <td v-text="s.created"></td>
+              <tr v-for="e in subjects">
+                <td v-text="e.id"></td>
+                <td v-text="e.name"></td>
+                <td>{{e.gmtCreated | date}}</td>
                 <td>
-                  <button class="btn btn-danger">删除</button>
-                  <button class="btn btn-success">编辑</button>
+                  <button v-on:click="del(e.id)" class="btn btn-danger">删除</button>
                 </td>
               </tr>
             </tbody>
@@ -53,14 +52,14 @@
         <h4 class="modal-title">增加科目</h4>
       </div>
       <div class="modal-body">
-        <form class="form-horizontal">
+        <div class="form-horizontal">
           <div class="form-group">
             <label for="inputEmail3" class="col-sm-2 control-label">科目名称</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" id="subject_name" placeholder="科目名称">
             </div>
           </div>
-        </form>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -84,7 +83,7 @@
             layer.msg('科目名称不能为空');
             return;
           }
-          $.each(vm.subjects, function(i, e) {
+          $.each(vm.subjects||[], function(i, e) {
              if (e.name == subject) {
               layer.msg('此科目已经存在，请重新输入');
               exists = true;
@@ -92,29 +91,70 @@
              }
           });
           if (!exists) {
-            vm.subjects.push({
-              id: vm.subjects.length + 1,
-              name: subject,
-              created: new Date().format('yyyy-MM-dd')
-            });
-            $('#add_modal').modal('hide');
+        	  $.ajax({
+        		  url: root + '/admin/subject/insert',
+        		  method: 'POST',
+        		  data: {name: subject},
+        		  success: function(r) {
+        			  if (r.code != 200) {
+        				  layer.msg(r.msg);
+        			  } else {
+        				  vm.list();
+        		          $('#add_modal').modal('hide');
+        			  }
+        		  }
+        	  });
           }
         });
         var vm = new Vue({
           el: '#app',
           data: {
-              subjects: [
-              {id: 1, name: '语文', created: '2017-01-21'},
-              {id: 2, name: '数学', created: '2017-01-22'},
-              {id: 3, name: '英语', created: '2017-03-21'},
-              {id: 4, name: '政治', created: '2015-11-21'}
-              ]
+              subjects: []
           },
           methods: {
             add: function() {
               $('#subject_name').val('');
               $('#add_modal').modal('show');
+            },
+            list: function() {
+            	var that = this;
+            	$.ajax({
+            		url: root + '/admin/subject/list',
+            		method: 'GET',
+            		success: function(r) {
+            			that.subjects = r.data;
+            		}
+            	});
+            },
+            del: function(id) {
+            	var that = this;
+            	layer.confirm('删除科目将会删除下面的所有试题以及答题记录, 是否继续?', {
+           		  icon: 3, title: '警告'
+           		}, function(){
+           		  $.ajax({
+           			  url: root + '/admin/subject/delete',
+           			  method: 'POST',
+           			  data: {id: id},
+           			  success: function(r) {
+           				  if (r.code == 200) {
+           					  layer.msg('删除成功', {time: 1300}, function() {
+           						  that.list();
+           					  });
+           				  } else {
+           					  layer.msg(r.msg);
+           				  }
+           			  }
+           		  });
+           		});
             }
+          }, 
+          mounted: function() {
+        	  this.list();
+          },
+          filters: {
+        	  date: function(value) {
+        		  return new Date(value).format('yyyy-MM-dd');
+        	  }
           }
         });
       });

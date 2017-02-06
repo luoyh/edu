@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.roy.wx.dao.MemberMapper">
+
+	<select id="page" parameterType="com.edu.roy.wx.comm.Page" resultType="Member">
+		select * FROM member where 1=1 
+		<if test="param.openid != null and !&quot;&quot;.equals(param.openid)">
+			and openid = #{param.openid}
+		</if>
+		<if test="param.name != null">
+		 and `name` like concat('%', #{param.name}, '%')
+		</if>
+		<if test="param.school != null and !&quot;&quot;.equals(param.school)">
+			and school = #{param.school}
+		</if>
+	</select>
+
+</mapper>

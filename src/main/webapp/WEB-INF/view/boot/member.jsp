@@ -17,12 +17,24 @@
 <%@include file="menu.jsp"%>
 
 
-  <div class="layui-tab layui-tab-brief" lay-filter="demoTitle">
+  <div class="layui-tab layui-tab-brief">
     <div class="layui-body layui-tab-content site-demo site-demo-body">
       <div class="layui-tab-item layui-show">
-        <div class="layui-main" style="" id="subject">
-          <div>
-            <button v-on:click="add" class="layui-btn">增加</button>
+        <div class="layui-main" style="" id="app">
+          <div class="form-inline">
+          	<div class="form-group">
+          		<label>openid:</label>
+          		<input type="text" v-model="openid" class="form-control" />
+          	</div>
+          	<div class="form-group">
+          		<label for="">姓名:</label>
+          		<input type="text" v-model="name" class="form-control" />
+          	</div>
+          	<div class="form-group">
+          		<label for="">学校:</label>
+          		<input type="text" v-model="school" class="form-control" />
+          	</div>
+            <button v-on:click="refresh" class="layui-btn">刷新</button>
           </div>
           <table class="layui-table">
         <colgroup>
@@ -33,21 +45,22 @@
         </colgroup>
         <thead>
           <tr>
-            <th>科目编号</th>
-            <th>科目名称</th>
-            <th>创建时间</th>
-            <th>操作</th>
+            <th>名称</th>
+            <th>openid</th>
+            <th>电话</th>
+            <th>年龄</th>
+            <th>学校</th>
+            <th>性别</th>
           </tr> 
         </thead>
         <tbody>
-          <tr v-for="s in subjects">
-            <td v-text="s.id"></td>
-            <td v-text="s.name"></td>
-            <td v-text="s.created"></td>
-            <td>
-              <button v-on:click="hello(s.name)" class="layui-btn layui-btn-small layui-btn-danger">删除</button>
-              <button class="layui-btn layui-btn-small layui-btn-normal">编辑</button>
-            </td>
+          <tr v-for="e in members">
+            <td v-text="e.name"></td>
+            <td v-text="e.openid"></td>
+            <td v-text="e.mobile"></td>
+            <td v-text="e.age"></td>
+            <td v-text="e.school"></td>
+            <td v-text="e.sex"></td>
           </tr>
         </tbody>
       </table>
@@ -64,6 +77,38 @@
   layui.use(['element','layer'], function() {
     var 
       layer = layui.layer;
+    
+    $(function() {
+    	var vm = new Vue({
+    		el: '#app',
+    		data: {
+    			openid: '',
+    			name: '',
+    			school: '',
+    			members: []
+    		}, 
+    		methods: {
+    			refresh: function() {
+    				var that = this;
+        			$.ajax({
+        				url: root + '/admin/member/page',
+        				method: 'GET',
+        				data: {
+        					openid: that.openid,
+        					name: that.name,
+        					school: that.school
+        				},
+        				success: function(r) {
+        					that.members = r.data.data;
+        				}
+        			});
+    			}
+    		},
+    		mounted: function() {
+    			this.refresh();
+    		}
+    	});
+    });
   });
 </script>
 </html>

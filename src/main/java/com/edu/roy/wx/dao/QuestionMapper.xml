@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.roy.wx.dao.QuestionMapper">
+	
+	<insert id="inserts" parameterType="map">
+		insert into question(sort,title,type,suite_id,subject_id,score,options,answers,description,images,ass_images,gmt_created,gmt_modified) 
+		values
+		<foreach collection="qstns" item="e" separator=",">
+			(#{e.sort},#{e.title},#{e.type},#{suiteId},#{e.subjectId},#{e.score},#{e.options},#{e.answers},#{e.description},#{e.images},#{e.assImages},now(),now())
+		</foreach>
+	</insert>
+
+</mapper>

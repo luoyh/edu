@@ -9,8 +9,13 @@
 	.questions button {
 		margin: 5px;
 	}
+	.center {
+	text-align: center;
+	}
+	.pointer {cursor: pointer;}
 	
 </style>
+<script src="${root }/static/lib/ajaxfileupload.js"></script>
 <body>
 <div class="layui-layout layui-layout-admin">
 
@@ -114,6 +119,10 @@
 			  <div class="form-group">
 			  	<label for="" class="col-md-2 control-label">题目图片</label>
 			  	<div class="col-md-10" id="qstn_imagep">
+			  		<div class="input-group">
+				      <input id="qstn_image" type="text" class="form-control">
+				      <div onclick="up(0)" class="input-group-addon pointer">上传图片</div>
+				    </div>
 			  	</div>
 			  </div>
 			  <div id="opts_div" class="form-group">
@@ -135,6 +144,10 @@
 			  <div class="form-group">
 			  	<label for="" class="col-md-2 control-label">答案图片</label>
 			  	<div class="col-md-10" id="qstn_ass_imagep">
+			  		<div class="input-group">
+				      <input id="qstn_ass_image" type="text" class="form-control">
+				      <div onclick="up(1)" class="input-group-addon pointer">上传图片</div>
+				    </div>
 			  	</div>
 			  </div>
 			  <div class="form-group">
@@ -147,14 +160,40 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">删除</button>
         <button type="button" id="qstn_submit" class="btn btn-primary">增加</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-  
+
+<div id="upload_cnt" style="display: none;">
+	<div class="form-horizontal">
+		<div class="form-group">
+			<label class="col-md-4 control-label">选择图片:</label>
+			<div class="col-md-8">
+				<input type="file" id="slt_file" class="form-control">
+			</div>
+		</div>
+		<div class="form-group m10t center">
+			<button type="button" class="btn btn-default cancel">取消</button>
+			<button type="button" class="btn btn-primary upload">上传</button>
+		</div>
+	</div>
+</div>
+
 </body>
 <script>
+
+var uphtm = function(id) {
+	return '<div class="form-horizontal"><div class="form-group"><label class="col-md-4 control-label">选择图片:</label><div class="col-md-8"><input type="file" id="'+id+'" class="form-control"></div></div><div class="form-group m10t center"><button type="button" class="btn btn-default cancel">取消</button><button type="button" class="btn btn-primary upload">上传</button></div></div>'';
+};
+
+var up = function(t) {
+	//<div class="form-horizontal"><div class="form-group"><label class="col-md-4 control-label">选择图片:</label><div class="col-md-8"><input type="file" id="slt_file" class="form-control"></div></div><div class="form-group m10t center"><button type="button" class="btn btn-default cancel">取消</button><button type="button" class="btn btn-primary upload">上传</button></div></div>
+	uphtm();
+};
+
   layui.use(['element','layer'], function() {
     var 
       layer = layui.layer;
@@ -164,9 +203,9 @@
       		$('#qstn_code').val(opts.code || '');
       		$('#qstn_type').val(opts.type || 1);
       		$('#qstn_title').val(opts.title || '');
-      		$('#qstn_imagep').html('<input id="qstn_image" type="file" class="form-control">');
+      		//$('#qstn_imagep').html('<input id="qstn_image" type="file" class="form-control">');
       		$('#qstn_image').data('path', opts.image || '');
-      		$('#qstn_ass_imagep').html('<input id="qstn_ass_image" type="file" class="form-control">');
+      		//$('#qstn_ass_imagep').html('<input id="qstn_ass_image" type="file" class="form-control">');
       		$('#qstn_ass_image').data('path', opts.assImage || '');
       		$('#qstn_score').val(opts.score || '');
       		if (opts.type == 1 || opts.type == 2) {
@@ -239,6 +278,7 @@
       			$('#opts_div').show();
       			optsRefresh();
       		} else if (v == 3) {
+      			$('#opts_div').hide();
       			$('#answers').html('<label><input name="v_q" type="radio" value="0">正确</label><label><input name="v_q" type="radio" value="1">错误</label>');
       		} else {
       			$('#opts_div').hide();
@@ -316,8 +356,19 @@
               edit: function(i) {
               	initQstn(this.questions[i]);
               	$('#add_quesion_modal').modal('show');
+              },
+              upload: function() {
+            	  $.ajaxFileUpload({
+            		  url: root + '/admin/suite/upload',
+            		  fileElementId: 'file',
+            		  secureuri: false,
+            		  dataType: 'json',
+            		  success: function(r) {
+            			  console.log(r);
+            		  }
+            	  });
               }
-            }
+            } // end methods
           });
       });
   });

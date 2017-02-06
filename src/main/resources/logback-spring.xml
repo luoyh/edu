@@ -84,7 +84,7 @@
 			<charset>UTF-8</charset>
 		</encoder>
 	</appender>
-	<logger name="com.edu.roy.ex.dao" level="DEBUG" additivity="false">
+	<logger name="com.edu.roy.wx.dao" level="DEBUG" additivity="false">
 		<!-- <appender-ref ref="FILE_SQL" /> -->
 		<appender-ref ref="STDOUT" />
 	</logger>
