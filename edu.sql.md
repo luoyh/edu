@@ -28,7 +28,9 @@ create table member (
 	sex tinyint(2) not null default 0 comment '0:secret,1:male,2:female',
 	gmt_created datetime not null,
 	gmt_modified datetime not null,
-	primary key(id)
+	primary key(id),
+	unique index uni_idx_openid(openid),
+	unique index uni_idx_mobile(mobile)
 ) engine=innodb default charset=utf8;
 ```
 
@@ -44,7 +46,7 @@ create table drill_record (
 	subject_id bigint not null,
 	suite_id bigint  not null,
 	question_id bigint  not null,
-	answers json,
+	answers varchar(1024) not null,
 	gmt_created datetime not null,
 	gmt_modified datetime not null,
 	primary key(id)
@@ -59,12 +61,32 @@ create table drill_result (
 	id bigint not null auto_increment,
 	member_id bigint not null,
 	subject_id bigint not null,
-	type int not null comment '-3:suite,-2:suite order,-1:all,0:single,1:multi,2:solve,3:other',
-	target_id bigint null comment 'drill order is question(type!=-3) other is suite(type=-3)',
+	suite_id bigint not null default 0 comment 'type < 0 is suiteId',
+	type int not null comment '-2:drill,-1:exam,0:all,1:single,2:multi,3:judge,4:solve,5:other',
+	target_id bigint null comment 'type < 0 is suiteId else questionId',
 	score int not null,
 	gmt_created datetime not null,
 	gmt_modified datetime not null,
 	primary key(id)
+)engine=innodb default charset=utf8;
+```
+
+# wrong_result
+
+```
+drop table if exists wrong_result;
+create table wrong_result (
+	id bigint not null auto_increment,
+	member_id bigint not null,
+	subject_id bigint not null,
+	suite_id bigint not null,
+	question_id bigint not null,
+	answers varchar(1024) not null,
+	cnd int not null default 0,
+	gmt_created datetime not null,
+	gmt_modified datetime not null,
+	primary key(id),
+	unique index uidx_m_q(member_id, question_id)
 )engine=innodb default charset=utf8;
 ```
 
@@ -89,10 +111,13 @@ create table subject (
 drop table if exists suite;
 create table suite (
 	id bigint not null auto_increment,
-	title varchar(32) not null comment '试卷标题',
+	title varchar(1024) not null comment '试卷标题',
 	years int not null comment '试卷年份，4位',
 	months int not null comment '试卷月份',
 	subject_id int not null comment '所属科目',
+	questions int not null default 0,
+	score int not null default 0,
+	timing int not null default 0,
 	gmt_created datetime not null,
 	gmt_modified datetime not null,
 	primary key(id)
@@ -106,16 +131,16 @@ drop table if exists question;
 create table question (
 	id bigint  not null auto_increment,
 	sort int not null comment '题目排序，也就是题目编号',
-	title varchar(128) not null comment '题目标题',
+	title varchar(1024) not null comment '题目标题',
 	type tinyint not null comment '0:single,1:multi,2:solve,3:other',
 	suite_id bigint not null comment '试卷id',
 	subject_id bigint not null comment '科目id',
 	score int not null comment '题目分数',
-	options json comment '题目选项',
-	answers json comment '题目答案，当为选择题时为数组',
+	options varchar(1024) comment '题目选项,逗号分隔,A,B,C',
+	answers varchar(1024) comment '题目答案，选择题为逗号分隔的选项,A,B,C',
 	description varchar(128) comment '题目说明',
-	images json comment '题目图片，数组',
-	ass_images json comment '题目解答图片，数组',
+	images varchar(1024) comment '题目图片，逗号分隔',
+	ass_images varchar(1024) comment '题目解答图片，逗号分隔',
 	gmt_created datetime not null,
 	gmt_modified datetime not null,
 	primary key(id)
