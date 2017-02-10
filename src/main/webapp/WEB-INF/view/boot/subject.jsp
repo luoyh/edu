@@ -150,11 +150,6 @@
           }, 
           mounted: function() {
         	  this.list();
-          },
-          filters: {
-        	  date: function(value) {
-        		  return new Date(value).format('yyyy-MM-dd');
-        	  }
           }
         });
       });

@@ -9,11 +9,25 @@ public class Suite extends Entity {
 	private int months;
 	private long subjectId;
 	private int questions;
+	private int score;
+	private int timing;
 	
 	// -------------- vo 
 	private String subject;
 	
 	
+	public int getTiming() {
+		return timing;
+	}
+	public void setTiming(int timing) {
+		this.timing = timing;
+	}
+	public int getScore() {
+		return score;
+	}
+	public void setScore(int score) {
+		this.score = score;
+	}
 	public int getQuestions() {
 		return questions;
 	}

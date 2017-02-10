@@ -2,6 +2,7 @@ package com.edu.roy.wx.tools;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -9,6 +10,18 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonTools {
+	
+	public static void main(String[] args) {
+		Map<?, ?> map = readObject("{"+
+					   "\"access_token\":\"ACCESS_TOKEN\","+
+					  "\"expires_in\":7200,"+
+					   "\"refresh_token\":\"REFRESH_TOKEN\","+
+					   "\"openid\":\"OPENID\","+
+					   "\"scope\":\"SCOPE\","+
+					   "\"unionid\": \"o6_bmasdasdsad6_2sgVt7hMZOPfL\""+
+					"}", Map.class);
+		System.out.println(map.get("unionid"));
+	}
 	
 	private static ObjectMapper mapper;
 	

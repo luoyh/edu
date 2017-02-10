@@ -11,10 +11,12 @@
 <title>Insert title here</title>
 <link rel="stylesheet" href="${root}/static/lay/css/layui.css">
 <link rel="stylesheet" href="${root}/static/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="${root}/static/lib/page/page.css">
 <script src="${root}/static/lib/jquery.min.js"></script>
 <script src="${root}/static/lay/layui.js"></script>
 <script src="${root}/static/lib/vue.min.js"></script>
 <script src="${root}/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="${root}/static/lib/page/page.js"></script>
 <style>
 .header{height: 50px; border-bottom: 1px solid #404553;  background-color: #393D49; color: #fff;}
 .logo{position: absolute; left: 0; top: 18px;font-size:1.3em;color:#fff;}
@@ -47,5 +49,18 @@ Date.prototype.format = function (fmt) {
     if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 }
+Vue.filter('date', function (value) {
+	return new Date(value).format('yyyy-MM-dd');
+});
+$(document).ajaxComplete(function(evt, xhr) {
+	try {
+		if('TimeOut' == xhr.getResponseHeader('SessionStatus')) {
+			layer.msg('由于长时间无动作，请重新登录', function() {
+				window.location.href = root + '/login/go';
+			});
+		}
+	} catch(e) {}
+});
+//window.onerror=function(){return true;};
 </script>
 </head>

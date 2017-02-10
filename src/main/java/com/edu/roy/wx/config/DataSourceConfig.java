@@ -6,10 +6,12 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 //@PropertySource
@@ -27,11 +29,21 @@ public class DataSourceConfig {
 	
 	@Bean
 	public DataSource dataSource() {
-		return DataSourceBuilder.create()
-		.driverClassName(driverClassName)
-		.username(username)
-		.password(password)
-		.url(url).build();
+		HikariConfig hc = new HikariConfig();
+		hc.setDriverClassName(driverClassName);
+		hc.setUsername(username);
+		hc.setPassword(password);
+		hc.setJdbcUrl(url);
+		hc.setMinimumIdle(5);
+		hc.setMaximumPoolSize(10);
+		hc.setIdleTimeout(5000);
+		hc.setConnectionTestQuery("select 1");
+		return new HikariDataSource(hc);
+//		return DataSourceBuilder.create()
+//		.driverClassName(driverClassName)
+//		.username(username)
+//		.password(password)
+//		.url(url).build();
 	}
 
 	@Bean

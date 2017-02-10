@@ -16,8 +16,17 @@ public class MemberService {
 	@Autowired
 	private MemberMapper memberMapper;
 	
-	public void insert(Member member) {
+	public boolean insert(Member member) {
+		List<Member> checks = memberMapper.check(member.getOpenid(), member.getMobile());
+		if (null != checks && !checks.isEmpty()) {
+			return false;
+		}
 		memberMapper.insert(member);
+		return true;
+	}
+	
+	public Member findOfOpenid(String openid) {
+		return memberMapper.findOfOpenid(openid);
 	}
 	
 	public List<Member> list() {

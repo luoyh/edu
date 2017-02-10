@@ -3,6 +3,7 @@ package com.edu.roy.wx.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import com.edu.roy.wx.comm.Page;
@@ -17,5 +18,11 @@ public interface MemberMapper {
 	void insert(Member member);
 
 	List<Member> page(Page<Member> page);
+	
+	@Select("select * from member where openid=#{openid}")
+	Member findOfOpenid(String openid);
+	
+	@Select("select * from member where openid=#{openid} or mobile=#{mobile}")
+	List<Member> check(@Param("openid") String openid, @Param("mobile") String mobile);
 
 }

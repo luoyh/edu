@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.roy.wx.dao.ResultMapper">
+	<insert id="examed" parameterType="map">
+		insert into drill_record(member_id, type, result, subject_id, suite_id, question_id, answers, gmt_created, gmt_modified) values
+		<foreach collection="data" item="e" separator=",">
+		(#{memberId}, #{e.type}, #{e.result}, #{subjectId}, #{suiteId}, #{e.questionId}, #{e.answers}, now(), now())
+		</foreach>
+	</insert>
+	<insert id="wrongsSave" parameterType="map">
+		insert into wrong_result(member_id, subject_id, suite_id, question_id, answers, gmt_created, gmt_modified) values
+		<foreach collection="data" item="e" separator=",">
+		(#{memberId}, #{subjectId}, #{suiteId}, #{e.questionId}, #{e.answers}, now(), now())
+		</foreach>
+	</insert>
+	<!-- <insert id="insertResult" parameterType="map">
+		insert into drill_result(member_id, subject_id, type, target_id, score, gmt_created, gmt_modified) values
+		(#{memberId}, #{subjectId}, #{type}, #{targetId}, #{score}, now(), now())
+	</insert> -->
+
+</mapper>

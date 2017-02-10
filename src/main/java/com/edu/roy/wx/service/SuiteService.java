@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.edu.roy.wx.comm.Page;
 import com.edu.roy.wx.dao.QuestionMapper;
 import com.edu.roy.wx.dao.SuiteMapper;
-import com.edu.roy.wx.model.Question;
 import com.edu.roy.wx.model.Suite;
 import com.edu.roy.wx.tools.JsonTools;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -23,6 +22,10 @@ public class SuiteService {
 	private SuiteMapper suiteMapper;
 	@Autowired
 	private QuestionMapper questionMapper;
+	
+	public Suite findById(long id) {
+		return suiteMapper.findById(id);
+	}
 	
 	public Page<Suite> page(int years, int months, int subject, String title, int current, int size) {
 		Page<Suite> page = new Page<>();
@@ -41,16 +44,51 @@ public class SuiteService {
 	@Transactional
 	public void insert(String suites, String questions) {
 		Suite suite = JsonTools.readObject(suites, Suite.class);
-		List<Question> list = JsonTools.readList(questions, new TypeReference<List<Question>>() {});
+		List<Integer> list = JsonTools.readList(questions, new TypeReference<List<Integer>>() {});
 		suite.setQuestions(list.size());
 		suiteMapper.insert(suite);
 		
-		Map<String, Object> param = Maps.newHashMap();
-		param.put("qstns", list);
-		param.put("suiteId", suite.getId());
-		questionMapper.inserts(param);
+		//Map<String, Object> param = Maps.newHashMap();
+		//param.put("qstns", list);
+		//param.put("suiteId", suite.getId());
+		//questionMapper.inserts(param);
+		
+		StringBuilder sb = new StringBuilder();
+		for(int i : list) {
+			sb.append(i).append(",");
+		}
+		sb.append("0");
+		questionMapper.setSuiteId(suite.getId(), sb.toString());
+	}
+
+	@Transactional
+	public void update(String suites, String questions) {
+		Suite suite = JsonTools.readObject(suites, Suite.class);
+		List<Integer> list = JsonTools.readList(questions, new TypeReference<List<Integer>>() {});
+		suite.setQuestions(list.size());
+		suiteMapper.update(suite);
+		
+		//Map<String, Object> param = Maps.newHashMap();
+		//param.put("qstns", list);
+		//param.put("suiteId", suite.getId());
+		//questionMapper.inserts(param);
+		
+		StringBuilder sb = new StringBuilder();
+		for(int i : list) {
+			sb.append(i).append(",");
+		}
+		sb.append("0");
+		questionMapper.setSuiteId(suite.getId(), sb.toString());
 	}
 	
+	public void delete(long id) {
+		suiteMapper.delete(id);
+	}
 	
+	public List<Suite> loadBySubject(long subjectId) {
+		return suiteMapper.loadBySubject(subjectId);
+	}
 
+	
+	
 }
