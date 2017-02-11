@@ -20,4 +20,24 @@
 		(#{memberId}, #{subjectId}, #{type}, #{targetId}, #{score}, now(), now())
 	</insert> -->
 
+	<select id="page" parameterType="com.edu.roy.wx.comm.Page" resultType="ResultVO">
+		select a.*,b.name memberName,c.name subjectName,d.title suiteTitle FROM 
+		drill_result a 
+		join member b on a.member_id=b.id
+		join subject c on a.subject_id=c.id
+		join suite d on a.suite_id=d.id
+		where 1=1 
+		<if test="param.subjectId>0">
+			and a.subject_id=#{param.subjectId}
+		</if>
+		<if test="param.suiteTitle!=null">
+			and d.title like concat('%',#{param.suiteTitle},'%')
+		</if>
+		<if test="param.memberName!=null">
+			and b.name like concat('%',#{param.memberName},'%')
+		</if>
+		<if test="param.suiteType!=null">
+			and d.type=#{param.suiteType}
+		</if>
+	</select>
 </mapper>

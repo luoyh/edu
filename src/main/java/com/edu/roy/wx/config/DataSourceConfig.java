@@ -36,7 +36,6 @@ public class DataSourceConfig {
 		hc.setJdbcUrl(url);
 		hc.setMinimumIdle(5);
 		hc.setMaximumPoolSize(10);
-		hc.setIdleTimeout(5000);
 		hc.setConnectionTestQuery("select 1");
 		return new HikariDataSource(hc);
 //		return DataSourceBuilder.create()
@@ -56,7 +55,7 @@ public class DataSourceConfig {
 		//PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 		//sqlSessionFactoryBean.setMapperLocations(resolver.getResources("classpath:/mybatis/*.xml"));
 		sqlSessionFactoryBean.setConfigLocation(new ClassPathResource("conf/mybatis-config.xml"));
-		sqlSessionFactoryBean.setTypeAliasesPackage("com.edu.roy.wx.model");
+		sqlSessionFactoryBean.setTypeAliasesPackage("com.edu.roy.wx.model,com.edu.roy.wx.vo");
 
 		return sqlSessionFactoryBean.getObject();
 	}

@@ -9,7 +9,9 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import com.edu.roy.wx.comm.Page;
 import com.edu.roy.wx.vo.HomeResultVO;
+import com.edu.roy.wx.vo.ResultVO;
 import com.edu.roy.wx.vo.WrongQuestionVO;
 
 /**
@@ -35,4 +37,6 @@ public interface ResultMapper {
 	
 	@Select("select a.*,b.title suiteTitle,c.`name` subjectName,(select count(*) from drill_record where member_id=1) as total,(select count(*) from wrong_result where member_id=1) as wrongs from drill_result a join suite b on a.suite_id=b.id join `subject` c on a.subject_id=c.id  where a.member_id=#{memberId} order by a.gmt_created desc")
 	List<HomeResultVO> home(long memberId);
+
+	List<ResultVO> page(Page<ResultVO> param);
 }

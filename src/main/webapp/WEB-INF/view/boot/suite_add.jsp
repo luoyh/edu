@@ -27,7 +27,7 @@
     <div class="layui-body layui-tab-content site-demo site-demo-body">
       <div class="layui-tab-item layui-show">
         <div class="layui-main" style="" id="app">
-        	<div class="form-horizontal">
+        	<div class="form-horizontal" style="width:600px;margin:auto;">
 			  <div class="form-group">
 			    <label class="col-md-2 control-label">试卷名称</label>
 			    <div class="col-md-10">

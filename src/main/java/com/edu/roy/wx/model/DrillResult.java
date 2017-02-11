@@ -24,6 +24,16 @@ public class DrillResult extends Entity {
 		private Type(int code) {
 			this.code = code;
 		}
+
+		public static boolean in(int code) {
+			for (Type type : Type.values()) {
+				if (type.code == code) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
 	}
 	
 	private long memberId;

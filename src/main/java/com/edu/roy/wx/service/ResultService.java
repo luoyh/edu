@@ -4,15 +4,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.edu.roy.wx.comm.Page;
 import com.edu.roy.wx.dao.ResultMapper;
 import com.edu.roy.wx.model.DrillRecord;
+import com.edu.roy.wx.model.DrillResult;
 import com.edu.roy.wx.model.WrongResult;
 import com.edu.roy.wx.tools.JsonTools;
 import com.edu.roy.wx.vo.HomeResultVO;
+import com.edu.roy.wx.vo.ResultVO;
 import com.edu.roy.wx.vo.WrongQuestionVO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Lists;
@@ -82,4 +86,28 @@ public class ResultService {
 		return resultMapper.home(memberId);
 	}
 
+	public Page<ResultVO> pageHandle(long subjectId, String suiteTitle, String memberName, String suiteType, int current, int size) {
+		Page<ResultVO> page = new Page<>();
+		page.setAsc(false);
+		page.setOrder("gmt_created");
+		page.setCurrent(current);
+		page.setSize(size);
+		Map<String, Object> param = Maps.newHashMap();
+		if (subjectId > 0) {
+			param.put("subjectId", subjectId);
+		}
+		if (!StringUtils.isBlank(suiteTitle)) {
+			param.put("suiteTitle", suiteTitle);
+		}
+		if (!StringUtils.isBlank(memberName)) {
+			param.put("memberName", memberName);
+		}
+		if (!StringUtils.isBlank(suiteType)) {
+			param.put("suiteType", suiteType);
+		}
+		page.setParam(param);
+		page.setData(resultMapper.page(page));
+		return page;
+	}
+	
 }
