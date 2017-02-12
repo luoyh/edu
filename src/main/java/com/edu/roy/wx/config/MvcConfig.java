@@ -1,5 +1,8 @@
 package com.edu.roy.wx.config;
 
+import javax.servlet.ServletContext;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.DispatcherServletAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +24,9 @@ import com.edu.roy.wx.adapt.MinimumAuthorizer;
 @Configuration
 @EnableWebMvc
 public class MvcConfig extends WebMvcConfigurerAdapter {
+	
+	@Autowired
+	private ServletContext context;
 	
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
@@ -69,7 +75,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new MinimumAuthorizer());
+		registry.addInterceptor(new MinimumAuthorizer(context));
 		super.addInterceptors(registry);
 	}
 

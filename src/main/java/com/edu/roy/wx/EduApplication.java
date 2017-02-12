@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class EduApplication {
 	static {
 		if (null == System.getProperty("spring.profiles.active")) {
-			System.setProperty("spring.profiles.active", "dev");
+			System.setProperty("spring.profiles.active", "ga");
 		}
 	}
 

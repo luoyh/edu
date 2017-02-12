@@ -23,6 +23,7 @@ public class DrillRecord extends Entity {
 	}
 	
 	private long memberId;
+	private long resultId;
 	private int type; // 0:order,1:suite,2:wrong
 	private int result; // 0:void,1:incertitude,2:right,3:wrong,4:part
 	private long subjectId; 
@@ -30,6 +31,12 @@ public class DrillRecord extends Entity {
 	private long questionId;
 	private String answers;
 	
+	public long getResultId() {
+		return resultId;
+	}
+	public void setResultId(long resultId) {
+		this.resultId = resultId;
+	}
 	public long getMemberId() {
 		return memberId;
 	}

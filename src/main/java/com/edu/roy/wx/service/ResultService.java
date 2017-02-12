@@ -16,6 +16,7 @@ import com.edu.roy.wx.model.DrillResult;
 import com.edu.roy.wx.model.WrongResult;
 import com.edu.roy.wx.tools.JsonTools;
 import com.edu.roy.wx.vo.HomeResultVO;
+import com.edu.roy.wx.vo.QuestionResultVO;
 import com.edu.roy.wx.vo.ResultVO;
 import com.edu.roy.wx.vo.WrongQuestionVO;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -57,19 +58,30 @@ public class ResultService {
 				lwr.add(wr);
 			}
 		}
+
+		// DrillResult.Type.SUITE.code
+		DrillResult dr = new DrillResult();
+		dr.setMemberId(memberId);
+		dr.setSubjectId(subjectId);
+		dr.setSuiteId(suiteId);
+		dr.setType(type);
+		dr.setTargetId(suiteId);
+		dr.setScore(score);
+		//memberId, subjectId, suiteId, type, suiteId, score
+		resultMapper.insertResult(dr);
+		
 		Map<String, Object> param = Maps.newHashMap();
 		param.put("memberId", memberId);
 		param.put("suiteId", suiteId);
 		param.put("subjectId", subjectId);
 		param.put("data", ldr);
+		param.put("resultId", dr.getId());
 		resultMapper.examed(param);
 		
 		if (!lwr.isEmpty()) {
 			param.put("data", lwr);
 			resultMapper.wrongsSave(param);
 		}
-		// DrillResult.Type.SUITE.code
-		resultMapper.insertResult(memberId, subjectId, suiteId, type, suiteId, score);
 	}
 	
 	public List<WrongQuestionVO> wrongedData(long subjectId, long memberId) {
@@ -108,6 +120,10 @@ public class ResultService {
 		page.setParam(param);
 		page.setData(resultMapper.page(page));
 		return page;
+	}
+	
+	public List<QuestionResultVO> questionResult(long resultId) {
+		return resultMapper.questionResult(resultId);
 	}
 	
 }

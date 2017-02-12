@@ -2,7 +2,9 @@ package com.edu.roy.wx.adapt;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,10 +22,19 @@ public class MinimumAuthorizer extends HandlerInterceptorAdapter {
 
 	private static final String ADMIN = "/admin/";
 	private static final String WX = "/wx/";
+	private ServletContext context;
+	
+	public MinimumAuthorizer(ServletContext context) {
+		this.context = context;
+	}
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
+		Map<?, ?> config = (Map<?, ?>) context.getAttribute("sysConfig");
+		if (null != config.get("global_test_status") && "test".equals(config.get("global_test_status"))) {
+			return super.preHandle(request, response, handler); 
+		}
 		String path = request.getServletPath();
 		if (path.startsWith(ADMIN)) {
 			HttpSession hs = request.getSession(false);

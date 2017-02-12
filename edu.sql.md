@@ -41,6 +41,7 @@ drop table if exists drill_record;
 create table drill_record (
 	id bigint  not null auto_increment,
 	member_id bigint  not null,
+	result_id bigint not null,
 	type tinyint not null comment '0:order,1:suite,2:wrong',
 	result tinyint not null comment '0:void,1:incertitude,2:bingo,3:wrong,4:part',
 	subject_id bigint not null,

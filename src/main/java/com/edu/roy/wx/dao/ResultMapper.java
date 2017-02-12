@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.edu.roy.wx.comm.Page;
+import com.edu.roy.wx.model.DrillResult;
 import com.edu.roy.wx.vo.HomeResultVO;
+import com.edu.roy.wx.vo.QuestionResultVO;
 import com.edu.roy.wx.vo.ResultVO;
 import com.edu.roy.wx.vo.WrongQuestionVO;
 
@@ -24,8 +25,9 @@ public interface ResultMapper {
 	void examed(Map<String, Object> param);
 	
 	@Insert("insert into drill_result(member_id, subject_id, suite_id, type, target_id, score, gmt_created, gmt_modified) values(#{memberId}, #{subjectId}, #{suiteId}, #{type}, #{targetId}, #{score}, now(), now())")
-	@Options(useGeneratedKeys = false)
-	void insertResult(@Param("memberId") long memberId, @Param("subjectId") long subjectId, @Param("suiteId") long suiteId, @Param("type") int type, @Param("targetId") long targetId, @Param("score") int score);
+	//@Options(useGeneratedKeys = false)
+	//@Param("memberId") long memberId, @Param("subjectId") long subjectId, @Param("suiteId") long suiteId, @Param("type") int type, @Param("targetId") long targetId, @Param("score") int score
+	void insertResult(DrillResult result);
 	
 	void wrongsSave(Map<String, Object> param);
 	
@@ -39,4 +41,7 @@ public interface ResultMapper {
 	List<HomeResultVO> home(long memberId);
 
 	List<ResultVO> page(Page<ResultVO> param);
+	
+	@Select("select a.*,b.answers resultAnswers from question a left join drill_record b on a.id=b.question_id where b.result_id=#{resultId} order by a.sort asc;")
+	List<QuestionResultVO> questionResult(long resultId);
 }
