@@ -94,6 +94,10 @@ public class ResultService {
 		}
 	}
 	
+	public void joinWrong(WrongResult wrongResult) {
+		
+	}
+	
 	public List<HomeResultVO> home(long memberId) {
 		return resultMapper.home(memberId);
 	}

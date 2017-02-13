@@ -290,7 +290,7 @@ var up = function(t) {
       			optsRefresh(JSON.parse(opts.answers));
       		} else if(opts.type == 3) {
 	            var r = opts.answers;
-	            $('#answers').html('<label><input '+(r==0?'checked':'')+' name="v_q" type="radio" value="0">正确</label><label><input name="v_q" '+(r==1?'checked':'')+' type="radio" value="1">错误</label>');
+	            $('#answers').html('<label><input '+(r=='A'?'checked':'')+' name="v_q" type="radio" value="0">正确</label><label><input name="v_q" '+(r=='B'?'checked':'')+' type="radio" value="1">错误</label>');
 	            $('#opts_div').hide();
            } else {
 	            $('#opts_div').hide();
@@ -353,6 +353,9 @@ var up = function(t) {
       				$('#answers input[name="v_q"]:checked').each(function(i, e){
       					answers.push($(e).val());
       				});
+      			}
+      			if (qstnType == 3) {
+      				options = ['正确', '错误'];
       			}
       			var qobj = {
 					id: $id,   					
@@ -433,7 +436,7 @@ var up = function(t) {
       			optsRefresh();
       		} else if (v == 3) {
       			$('#opts_div').hide();
-      			$('#answers').html('<label><input name="v_q" type="radio" value="0">正确</label><label><input name="v_q" type="radio" value="1">错误</label>');
+      			$('#answers').html('<label><input name="v_q" type="radio" value="A">正确</label><label><input name="v_q" type="radio" value="B">错误</label>');
       		} else {
       			$('#opts_div').hide();
       			$('#answers').html('<textarea rows="2" class="form-control"></textarea>');

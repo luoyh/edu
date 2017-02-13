@@ -152,7 +152,7 @@ background: #ccc;
 				<span class="qstn-cnt">{{questions[current].title}}</span>
 			</div>
 			<div v-show="questions[current].images!=''" class="center m10t">
-				<img v-bind:src="'${root }'+questions[current].images">
+				<img v-bind:src="'${root }/down?path='+questions[current].images">
 			</div>
 		</div>
 		<div :class="{hide: questions[current].type==4}" v-for="(e, i) in options" class="opts" @click="solve(i)">
@@ -167,7 +167,7 @@ background: #ccc;
 			<h3>试题详解:</h3>
 			<span>{{questions[current].description}}</span>
 			<div v-show="questions[current].assImages!=''" class="center m10t">
-				<img v-bind:src="questions[current].assImages">
+				<img v-bind:src="'${root }/down?path='+questions[current].assImages">
 			</div>
 		</div>
 	</div>
@@ -180,7 +180,8 @@ background: #ccc;
 		<span class="fbr" @click="prev">上一题</span>
 		<span class="fbr" @click="next">下一题</span>
 		<span class="fbr">{{current+1}}/{{questions.length}}</span>
-		<span @click="submit">提交</span>
+		<span style="color:#337ab7;" @click="solve(-1)" class="fbr">题解</span>
+		<span style="color:#337ab7;">加入错题</span>
 	</div>
 </div>
 </body>

@@ -168,11 +168,11 @@ display: block!important;
 				<span class="qstn-cnt">{{questions[current].title}}</span>
 			</div>
 			<div v-show="questions[current].images!=''" class="center m10t">
-				<img v-bind:src="'${root }'+questions[current].images">
+				<img v-bind:src="'${root }/down?path='+questions[current].images">
 			</div>
 		</div>
 		<div :class="{hide: questions[current].type==4}" v-for="(e, i) in options" class="opts" @click="solve(i)">
-			<span class="opts-chs" :class="{'opt-multi': !!multis[i]}" v-html="optFilter(i)"></span>
+			<span class="opts-chs" :class="{'opt-multi': !!multis[i]}" v-html="optFilter(i, e)"></span>
 			<div class="opts-cnt">{{e}}</div>
 		</div>
 		<div :class="{hide: questions[current].type!=4}" style="padding: 10px;margin: 10px;border: 1px solid #e0e0e0;">
@@ -183,7 +183,7 @@ display: block!important;
 			<h3>试题详解:</h3>
 			<span>{{questions[current].description}}</span>
 			<div v-show="questions[current].assImages!=''" class="center m10t">
-				<img v-bind:src="questions[current].assImages">
+				<img v-bind:src="'${root }/down?path='+questions[current].assImages">
 			</div>
 		</div>
 	</div>
@@ -252,7 +252,7 @@ display: block!important;
 				}
 			},
 			methods: {
-				optFilter: function(v) {
+				optFilter: function(v, qstn) {
 					var a = String.fromCharCode(65 + (v||0)), cls = 0, ret = String.fromCharCode(65 + (v||0));
 					var ans = this.answer || [], r = this.answers[this.current];
 					if ((ans.length == 0 || !r || !r.d) && !this.finished) {

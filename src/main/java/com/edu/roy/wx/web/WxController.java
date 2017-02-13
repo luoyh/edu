@@ -22,6 +22,7 @@ import com.edu.roy.wx.comm.Cons;
 import com.edu.roy.wx.comm.HttpResult;
 import com.edu.roy.wx.model.Member;
 import com.edu.roy.wx.model.Suite;
+import com.edu.roy.wx.model.WrongResult;
 import com.edu.roy.wx.service.ResultService;
 import com.edu.roy.wx.service.SuiteService;
 import com.edu.roy.wx.tools.HttpTools;
@@ -156,6 +157,14 @@ public class WxController extends BaseController {
 		return ok(HttpResult.me(HttpResult.OK, null, resultService.wrongedData(subjectId, memberId)));
 	}
 	
+	@RequestMapping(value = "/wronged/insert", method = RequestMethod.POST)
+	public ResponseEntity<HttpResult> wrongInsert(WrongResult wrongResult, HttpServletRequest request) {
+		if (StringUtils.isBlank(ids)) {
+			return ok(HttpResult.ok());
+		}
+		resultService.wrongSubmit(ids);
+		return ok(HttpResult.ok());
+	}
 
 	@RequestMapping(value = "/wronged/submit", method = RequestMethod.POST)
 	public ResponseEntity<HttpResult> wrongSubmit(String ids, HttpServletRequest request) {

@@ -94,7 +94,13 @@ public class MianController extends BaseController {
 		headers.setContentDispositionFormData("attachment", UuidTools.millis62String()); 
 		//MediaType.ANY_IMAGE_TYPE.toString()
         headers.setContentType(MediaType.IMAGE_PNG); 
-		return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(new File(questionPath() + "/" + path)), headers, HttpStatus.OK);
+        // TODO:: catch exception
+		File file = new File(questionPath() + "/" + path);
+		if (file.exists() && !file.isDirectory()) {
+			return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.OK);
+		} else {
+			return null;
+		}
 	}
 	
 }

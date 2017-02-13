@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Update;
 
 import com.edu.roy.wx.comm.Page;
 import com.edu.roy.wx.model.DrillResult;
+import com.edu.roy.wx.model.WrongResult;
 import com.edu.roy.wx.vo.HomeResultVO;
 import com.edu.roy.wx.vo.QuestionResultVO;
 import com.edu.roy.wx.vo.ResultVO;
@@ -44,4 +45,7 @@ public interface ResultMapper {
 	
 	@Select("select a.*,b.answers resultAnswers from question a left join drill_record b on a.id=b.question_id where b.result_id=#{resultId} order by a.sort asc;")
 	List<QuestionResultVO> questionResult(long resultId);
+	
+	@Insert("insert into wrong_result()")
+	void joinWrong(WrongResult wrongResult);
 }

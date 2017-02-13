@@ -9,7 +9,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport"
 	content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
-<title>Insert title here</title>
+<title>微信模拟考试系统</title>
 <link rel="stylesheet"
 	href="${root}/static/bootstrap/css/bootstrap.min.css">
 <script src="${root}/static/lib/jquery.min.js"></script>
