@@ -23,8 +23,8 @@
         <div class="layui-main" style="" id="app">
           <div class="form-inline">
           	<div class="form-group">
-          		<label>openid:</label>
-          		<input type="text" v-model="openid" class="form-control" />
+          		<label>手机号:</label>
+          		<input type="text" v-model="mobile" class="form-control" />
           	</div>
           	<div class="form-group">
           		<label for="">姓名:</label>
@@ -82,7 +82,7 @@
     	var vm = new Vue({
     		el: '#app',
     		data: {
-    			openid: '',
+    			mobile: '',
     			name: '',
     			school: '',
     			members: []
@@ -94,7 +94,7 @@
         				url: root + '/admin/member/page',
         				method: 'GET',
         				data: {
-        					openid: that.openid,
+        					mobile: that.mobile,
         					name: that.name,
         					school: that.school
         				},

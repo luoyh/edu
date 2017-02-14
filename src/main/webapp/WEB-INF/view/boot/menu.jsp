@@ -48,7 +48,7 @@
 		        <a href="${root}/boot.suite/go#hash_suite"><i class="layui-icon">&#xe624;</i> 试卷管理</a>
 		      </dd>
 		      <dd id="hash_result">
-		        <a href="${root}/boot.result/go#hash_result"><i class="layui-icon">&#xe63c;</i> 成绩管理</a>
+		        <a href="${root}/admin/result/go#hash_result"><i class="layui-icon">&#xe63c;</i> 成绩管理</a>
 		      </dd>
 		    </dl>
 

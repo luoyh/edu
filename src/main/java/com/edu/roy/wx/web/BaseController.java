@@ -38,7 +38,12 @@ public class BaseController {
 		return sysMap().get("question_image_path").toString();
 	}
 	
-	protected Member currentMember(HttpServletRequest request) {
+	protected boolean testEnvironment() {
+		Object t = sysMap().get("global_test_status");
+		return null != t && "test".equals(t.toString());
+	}
+	
+	private Member _member(HttpServletRequest request) {
 		try {
 			HttpSession hs = request.getSession(false);
 			if (null == hs) {
@@ -54,5 +59,17 @@ public class BaseController {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+	
+	protected Member currentMember(HttpServletRequest request) {
+		Member member = _member(request);
+		if (null == member) {
+			if (testEnvironment()) {
+				member = new Member();
+			} else {
+				throw new NullPointerException("not login");
+			}
+		}
+		return member;
 	}
 }

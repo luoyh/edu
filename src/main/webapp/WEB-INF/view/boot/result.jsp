@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" isELIgnored="false" trimDirectiveWhitespaces="true"%>
 <%@include file="include.jsp"%>
 <style>
+img {
+max-width: 100%;
+}
   .questions {
     border: 1px solid #ccc;
     margin-top: 10px;
@@ -114,14 +117,14 @@
       <div class="modal-body">
       	<div v-for="e in detail">
       		<h3>{{e.sort}}:{{e.title}}</h3>
-      		<p v-show="e.images != ''"><img :src="'${root }/'+e.images" /></p>
+      		<p v-show="e.images != ''"><img :src="'${root }/down?path='+e.images" /></p>
       		<div v-html="result(e)">
       		</div>
       		<h4>参考答案：</h4>
       		<p>{{JSON.parse(e.answers).join()}}</p>
    			<h5>分析:</h5>
    			<p>{{e.description}}</p>
-   			<p v-show="e.assImages != ''"><img :src="'${root }/'+e.assImages" /></p>
+   			<p v-show="e.assImages != ''"><img :src="'${root }/down?path='+e.assImages" /></p>
       	</div>
       </div>
       <div class="modal-footer">
@@ -214,7 +217,7 @@
 					});
       				return htm;
 				} else {
-					return JSON.parse(item.resultAnswers).join();
+					return '<i>JSON.parse(item.resultAnswers).join()</i>';
 				}
 				
 			}

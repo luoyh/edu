@@ -16,6 +16,7 @@
 <script src="${root}/static/bootstrap/js/bootstrap.min.js"></script>
 <style>
 body {background: #f2f7fa;    font-family: "Microsoft YaHei",'微软雅黑';}
+img {max-width: 100%;}
 .m10{margin:10px;}
 .m10t{margin-top:10px;}
 .m10r{margin-right:10px;}
@@ -75,6 +76,10 @@ padding: 0 10px;
 .opts-cnt {
 flex: 1;
 margin-left: 10px;
+min-height: 30px;
+line-height: 30px;
+font-weight: bold;
+font-size: 1.5rem;
 }
 .header {
     position: fixed;

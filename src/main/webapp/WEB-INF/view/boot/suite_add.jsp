@@ -289,8 +289,8 @@ var up = function(t) {
       			$('#qoptions').html(htm);
       			optsRefresh(JSON.parse(opts.answers));
       		} else if(opts.type == 3) {
-	            var r = opts.answers;
-	            $('#answers').html('<label><input '+(r=='A'?'checked':'')+' name="v_q" type="radio" value="0">正确</label><label><input name="v_q" '+(r=='B'?'checked':'')+' type="radio" value="1">错误</label>');
+	            var r = JSON.parse(opts.answers)[0];
+	            $('#answers').html('<label><input '+(r=='A'?'checked':'')+' name="v_q" type="radio" value="A">正确</label><label><input name="v_q" '+(r=='B'?'checked':'')+' type="radio" value="B">错误</label>');
 	            $('#opts_div').hide();
            } else {
 	            $('#opts_div').hide();

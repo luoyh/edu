@@ -16,6 +16,7 @@
 <script src="${root}/static/bootstrap/js/bootstrap.min.js"></script>
 <style>
 body {background: #f2f7fa;    font-family: "Microsoft YaHei",'微软雅黑';}
+img {max-width: 100%;}
 .m10{margin:10px;}
 .m10t{margin-top:10px;}
 .m10r{margin-right:10px;}
@@ -75,6 +76,10 @@ padding: 0 10px;
 .opts-cnt {
 flex: 1;
 margin-left: 10px;
+min-height: 30px;
+line-height: 30px;
+font-weight: bold;
+font-size: 1.5rem;
 }
 .footer{
     position: fixed;
@@ -181,7 +186,7 @@ background: #ccc;
 		<span class="fbr" @click="next">下一题</span>
 		<span class="fbr">{{current+1}}/{{questions.length}}</span>
 		<span style="color:#337ab7;" @click="solve(-1)" class="fbr">题解</span>
-		<span style="color:#337ab7;">加入错题</span>
+		<span style="color:#337ab7;" @click="joinWrong()">加入错题</span>
 	</div>
 </div>
 </body>
@@ -206,7 +211,8 @@ background: #ccc;
 				sa: '',
 				ro: false,
 				hidea: true,
-				finished: false
+				finished: false,
+				joined: []
 			},
 			watch: {
 				current: function(val, old) {
@@ -422,6 +428,30 @@ background: #ccc;
 						this.ro = false;
 						this.sa = '';
 					}
+				},
+				joinWrong: function() {
+					if (this.joined[this.current] == 1) {
+						this.msg('已加入错题');
+						return;
+					}
+					var qstn = this.questions[this.current], that = this;
+					$.ajax({
+						url: root + '/wx/wronged/insert',
+						method: 'POST',
+						data: {
+							subjectId: qstn.subjectId,
+							suiteId: qstn.suiteId,
+							questionId: qstn.id,
+							answers: '',
+							cnd: 0
+						},
+						success: function(r) {
+							if (r.code == 200) {
+								that.msg('加入成功');
+								that.joined[that.current] = 1;
+							}
+						}
+					});
 				}
 			},
 			mounted: function() {

@@ -46,6 +46,6 @@ public interface ResultMapper {
 	@Select("select a.*,b.answers resultAnswers from question a left join drill_record b on a.id=b.question_id where b.result_id=#{resultId} order by a.sort asc;")
 	List<QuestionResultVO> questionResult(long resultId);
 	
-	@Insert("insert into wrong_result()")
+	@Insert("insert into wrong_result(member_id, subject_id, suite_id, question_id, answers, cnd, gmt_created, gmt_modified) values(#{memberId}, #{subjectId}, #{suiteId}, #{questionId}, #{answers}, #{cnd}, now(), now()) on duplicate key update cnd=0")
 	void joinWrong(WrongResult wrongResult);
 }

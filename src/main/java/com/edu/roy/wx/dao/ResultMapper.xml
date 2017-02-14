@@ -10,10 +10,11 @@
 		</foreach>
 	</insert>
 	<insert id="wrongsSave" parameterType="map">
-		insert into wrong_result(member_id, subject_id, suite_id, question_id, answers, gmt_created, gmt_modified) values
+		insert into wrong_result(member_id, subject_id, suite_id, question_id, answers, cnd, gmt_created, gmt_modified) values
 		<foreach collection="data" item="e" separator=",">
-		(#{memberId}, #{subjectId}, #{suiteId}, #{e.questionId}, #{e.answers}, now(), now())
+		(#{memberId}, #{subjectId}, #{suiteId}, #{e.questionId}, #{e.answers}, 0, now(), now())
 		</foreach>
+		on duplicate key update cnd=0;
 	</insert>
 	<!-- <insert id="insertResult" parameterType="map">
 		insert into drill_result(member_id, subject_id, type, target_id, score, gmt_created, gmt_modified) values

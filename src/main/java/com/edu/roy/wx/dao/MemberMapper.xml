@@ -6,13 +6,13 @@
 
 	<select id="page" parameterType="com.edu.roy.wx.comm.Page" resultType="Member">
 		select * FROM member where 1=1 
-		<if test="param.openid != null and !&quot;&quot;.equals(param.openid)">
-			and openid = #{param.openid}
+		<if test="param.mobile != null">
+			and mobile = #{param.mobile}
 		</if>
 		<if test="param.name != null">
 		 and `name` like concat('%', #{param.name}, '%')
 		</if>
-		<if test="param.school != null and !&quot;&quot;.equals(param.school)">
+		<if test="param.school != null">
 			and school = #{param.school}
 		</if>
 	</select>

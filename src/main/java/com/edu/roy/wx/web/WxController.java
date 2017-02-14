@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -149,20 +148,14 @@ public class WxController extends BaseController {
 		if (null == subjectId) {
 			return bad(HttpResult.me(HttpResult.ERR, "科目编号不能为空"));
 		}
-		Member member = currentMember(request);
-		long memberId = 0;
-		if (null != member) {
-			memberId = member.getId();
-		}
-		return ok(HttpResult.me(HttpResult.OK, null, resultService.wrongedData(subjectId, memberId)));
+		return ok(HttpResult.me(HttpResult.OK, null, resultService.wrongedData(subjectId, currentMember(request).getId())));
 	}
 	
 	@RequestMapping(value = "/wronged/insert", method = RequestMethod.POST)
 	public ResponseEntity<HttpResult> wrongInsert(WrongResult wrongResult, HttpServletRequest request) {
-		if (StringUtils.isBlank(ids)) {
-			return ok(HttpResult.ok());
-		}
-		resultService.wrongSubmit(ids);
+		Member member = currentMember(request);
+		wrongResult.setMemberId(member.getId());
+		resultService.joinWrong(wrongResult);
 		return ok(HttpResult.ok());
 	}
 
@@ -178,11 +171,7 @@ public class WxController extends BaseController {
 	@RequestMapping("/home")
 	public String memberHome(ModelMap model, HttpServletRequest request) {
 		Member member = currentMember(request);
-		long memberId = 1;
-		if (null != member) {
-			memberId = member.getId();
-		}
-		model.put("data", resultService.home(memberId));
+		model.put("data", resultService.home(member.getId()));
 		model.put("member", member);
 		return "/app/home";
 	}

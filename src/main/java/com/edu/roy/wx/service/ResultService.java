@@ -95,7 +95,7 @@ public class ResultService {
 	}
 	
 	public void joinWrong(WrongResult wrongResult) {
-		
+		resultMapper.joinWrong(wrongResult);
 	}
 	
 	public List<HomeResultVO> home(long memberId) {
