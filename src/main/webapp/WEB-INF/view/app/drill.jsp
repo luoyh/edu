@@ -10,7 +10,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
 <title>招考重庆</title>
 <link rel="stylesheet" href="${root}/static/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="${root}/static/lib/jquery.mobile-1.4.5.min.css">
 <script src="${root}/static/lib/jquery.min.js"></script>
+<script src="${root}/static/lib/jquery.mobile-1.4.5.min.js"></script>
 <script src="${root}/static/lib/vue.min.js"></script>
 <script src="${root}/static/lay/mobile/layer.js"></script>
 <script src="${root}/static/bootstrap/js/bootstrap.min.js"></script>
@@ -179,7 +181,7 @@ background: #ccc;
 	<div class="header">
 		<span style="flex:1;"></span>
 		<span style="flex:2;font-size: 2rem;">模拟考试</span>
-		<a style="flex:1;text-decoration: none;" class="glyphicon glyphicon-home" href="${root }/wx/index"></a>
+		<span style="flex:1;text-decoration: none;" class="glyphicon glyphicon-home" @click="home"></span>
 	</div>
 	<div class="footer">
 		<span class="fbr" @click="prev">上一题</span>
@@ -192,6 +194,17 @@ background: #ccc;
 </body>
 <script>
 	$(function() { 
+		$.event.special.swipe.horizontalDistanceThreshold = 100;
+		$('body').on("swipeleft",function(){
+			  if (vm.current < vm.questions.length - 1) {
+				  vm.current ++;
+			  }
+		});
+		$('body').on("swiperight",function(){
+			  if (vm.current > 0) {
+				  vm.current --;
+			  }
+		});
 		//var 
 		vm = new Vue({
 			el: '#app',
@@ -452,6 +465,9 @@ background: #ccc;
 							}
 						}
 					});
+				},
+				home: function() {
+					window.location.href = root + '/wx/home';
 				}
 			},
 			mounted: function() {
