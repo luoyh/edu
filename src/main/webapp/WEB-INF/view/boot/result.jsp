@@ -217,7 +217,7 @@ max-width: 100%;
 					});
       				return htm;
 				} else {
-					return '<i>JSON.parse(item.resultAnswers).join()</i>';
+					return '<i>'+JSON.parse(item.resultAnswers).join()+'</i>';
 				}
 				
 			}
