@@ -303,6 +303,19 @@ background: #ccc;
 					if (that.answers[that.current] && that.answers[that.current].d) {
 						return;
 					}
+					if (i == -1) {
+						this.answers[this.current] = {
+								a: '',
+								r: [this.sa],
+								s: 0,
+								d: 1,
+								t: qstn.type,
+								id: qstn.id
+						};
+						this.hidea = false;
+						this.ro = true;
+					}
+					
 					if (qstn.type == 1 || qstn.type == 3) {
 						$.each(ans, function(ii, e) {
 							if (s == e) {
@@ -348,8 +361,15 @@ background: #ccc;
 						}
 						_a.t = qstn.type;
 						_a.id = qstn.id;
+						if (i == -1) {
+							_a.d = 1;
+							that.answer = ans;
+						}
 						that.answers[that.current] = _a;
 					}
+					
+					
+					
 				},
 				submit: function() {
 					if (this.finished) return;
