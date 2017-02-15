@@ -181,7 +181,7 @@ background: #ccc;
 	</div>
 	<div class="header">
 		<span style="flex:1;"></span>
-		<span style="flex:2;font-size: 2rem;">模拟考试</span>
+		<span style="flex:2;font-size: 2rem;">练习</span>
 		<span style="flex:1;text-decoration: none;" class="glyphicon glyphicon-home" @click="home"></span>
 	</div>
 	<div class="footer">
