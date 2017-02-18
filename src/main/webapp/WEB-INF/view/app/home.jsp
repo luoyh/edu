@@ -31,12 +31,20 @@ body {background: #f2f7fa;    font-family: "Microsoft YaHei",'微软雅黑';}
 <script>root='${root}';</script>
 </head>
 <body>
+<textarea style="display:none;" id="member_wx_info">${member.baseWxInfo }</textarea>
 <div id="app" v-cloak>
 	<div class="container content center">
 		<div style="margin-top: 30px;border: 1px solid #ccc; height: 50px;display: flex;align-items: center;font-weight: bold;">
 			<span style="flex:1;">今天是2016年5月21日 星期三 欢迎你: ${member.name }</span>
+			<img style="width: 48px;" :src="memberWxInfo.headimgurl" />
 		</div>
-		<div style="margin-top:30px;height: 150px;border: 1px solid #ccc; display:flex;align-items: center;">
+		<div v-for="e in subject" style="margin: 10px;border: 1px solid #e0e0e0;display: flex;height:30px;line-height:30px;font-size:1.6rem;">
+			<span style="width: 100px;border-right:1px solid #e0e0e0;font-weight:bold;">{{e.name}}</span>
+			<span style="flex:1;color:#698ebf">模拟考试</span>
+			<span style="flex:1;color:#698ebf">练习模式</span>
+			<span style="flex:1;color:#698ebf">错题</span>
+		</div>
+		<%-- <div style="margin-top:30px;height: 150px;border: 1px solid #ccc; display:flex;align-items: center;">
 			<span style="flex: 1;border-right: 1px solid #e0e0e0;">
 				<span class="glyphicon glyphicon-th" style="display:block;font-size:2rem;"></span>
 				<span style="display:block;">总共答题</span>
@@ -70,6 +78,7 @@ body {background: #f2f7fa;    font-family: "Microsoft YaHei",'微软雅黑';}
 			<!-- cd69b2 -->
 			</div>
 		</div>
+		 --%>
 	</div>
 </div>
 </body>
@@ -79,6 +88,8 @@ body {background: #f2f7fa;    font-family: "Microsoft YaHei",'微软雅黑';}
 		vm = new Vue({
 			el: '#app',
 			data: {
+				memberWxInfo: {},
+				subject: []
 			},
 			watch: {
 			},
@@ -100,6 +111,17 @@ body {background: #f2f7fa;    font-family: "Microsoft YaHei",'微软雅黑';}
 				var that = this;
 				this.$nextTick(function() {
 					// pass
+					that.memberWxInfo = JSON.parse($('#member_wx_info').val());
+					$.ajax({
+						url: root + '/admin/subject/list',
+						success: function(r) {
+							if (r.code == 200) {
+								that.subject = r.data;
+							} else {
+								that.msg(r.msg);
+							}
+						} 
+					});
 				});
 			}
 		});

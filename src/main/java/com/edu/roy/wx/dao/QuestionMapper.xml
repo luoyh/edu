@@ -5,10 +5,10 @@
 <mapper namespace="com.edu.roy.wx.dao.QuestionMapper">
 	
 	<insert id="inserts" parameterType="map">
-		insert into question(sort,title,type,suite_id,subject_id,score,options,answers,description,images,ass_images,gmt_created,gmt_modified) 
+		insert into question(sort,title,type,suite_id,subject_id,score,options,answers,description,adjunct,ass_adjunct,adjunct_type,ass_adjunct_type,gmt_created,gmt_modified) 
 		values
 		<foreach collection="qstns" item="e" separator=",">
-			(#{e.sort},#{e.title},#{e.type},#{suiteId},#{e.subjectId},#{e.score},#{e.options},#{e.answers},#{e.description},#{e.images},#{e.assImages},now(),now())
+			(#{e.sort},#{e.title},#{e.type},#{suiteId},#{e.subjectId},#{e.score},#{e.options},#{e.answers},#{e.description},#{e.adjunct},#{e.assAdjunct},#{e.adjunctType},#{e.assAdjunctType},now(),now())
 		</foreach>
 	</insert>
 

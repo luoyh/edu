@@ -21,7 +21,7 @@ public class DrillRecord extends Entity {
 			this.code = code;
 		}
 	}
-	
+
 	private long memberId;
 	private long resultId;
 	private int type; // 0:order,1:suite,2:wrong
@@ -30,7 +30,14 @@ public class DrillRecord extends Entity {
 	private long suiteId;
 	private long questionId;
 	private String answers;
+	private int score;
 	
+	public int getScore() {
+		return score;
+	}
+	public void setScore(int score) {
+		this.score = score;
+	}
 	public long getResultId() {
 		return resultId;
 	}

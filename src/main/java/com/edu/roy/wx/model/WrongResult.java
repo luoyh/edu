@@ -8,6 +8,7 @@ import com.edu.roy.wx.comm.Entity;
  * @date Feb 9, 2017
  */
 public class WrongResult extends Entity {
+	
 	private long memberId;
 	private long subjectId;
 	private long suiteId;

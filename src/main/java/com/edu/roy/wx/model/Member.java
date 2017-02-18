@@ -3,13 +3,21 @@ package com.edu.roy.wx.model;
 import com.edu.roy.wx.comm.Entity;
 
 public class Member extends Entity {
-
+	
 	private String openid;
 	private String mobile;
 	private String name;
 	private int age;
 	private String school;
-	private int sex;
+	private int sex;	//0:secret,1:male,2:female
+	private String baseWxInfo;
+
+	public String getBaseWxInfo() {
+		return baseWxInfo;
+	}
+	public void setBaseWxInfo(String baseWxInfo) {
+		this.baseWxInfo = baseWxInfo;
+	}
 	public String getOpenid() {
 		return openid;
 	}

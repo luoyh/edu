@@ -77,6 +77,11 @@
       layer = layui.layer;
 
       $(function() {
+    	  $('#subject_name').keypress(function(v) {
+    		  if (v.keyCode == 13) {
+    			  $('#add_submit').trigger('click');
+    		  }
+    	  });
         $('#add_submit').click(function() {
           var subject = $('#subject_name').val(), exists = false;
           if ('' == subject) {

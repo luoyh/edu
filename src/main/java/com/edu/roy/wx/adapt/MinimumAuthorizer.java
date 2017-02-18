@@ -31,8 +31,8 @@ public class MinimumAuthorizer extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		Map<?, ?> config = (Map<?, ?>) context.getAttribute("sysConfig");
-		if (null != config.get("global_test_status") && "test".equals(config.get("global_test_status"))) {
+		Map<?, ?> config = (Map<?, ?>) context.getAttribute(Cons.SYS_CONFIG_CONTEXT_KEY);
+		if (null != config.get(Cons.SysKey.GLOBAL_TEST_STATUS.code) && Cons.GLOBAL_STATUS_TEST.equals(config.get(Cons.SysKey.GLOBAL_TEST_STATUS.code))) {
 			return super.preHandle(request, response, handler); 
 		}
 		String path = request.getServletPath();

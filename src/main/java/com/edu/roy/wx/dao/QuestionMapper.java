@@ -14,8 +14,8 @@ import com.edu.roy.wx.model.Question;
 
 public interface QuestionMapper {
 	
-	@Insert("insert into question(sort,title,type,suite_id,subject_id,score,options,answers,description,images,ass_images,gmt_created,gmt_modified) values("
-			+ "#{sort},#{title},#{type},#{suiteId},#{subjectId},#{score},#{options},#{answers},#{description},#{images},#{assImages},now(),now())")
+	@Insert("insert into question(sort,title,type,suite_id,subject_id,score,options,answers,description,adjunct,ass_adjunct,adjunct_type,ass_adjunct_type,gmt_created,gmt_modified) values("
+			+ "#{sort},#{title},#{type},#{suiteId},#{subjectId},#{score},#{options},#{answers},#{description},#{adjunct},#{assAdjunct},#{adjunctType},#{assAdjunctType},now(),now())")
 	@SelectKey(statement = "select last_insert_id()", keyProperty = "id", resultType = long.class, before = false)
 	void insert(Question question);
 
@@ -24,7 +24,7 @@ public interface QuestionMapper {
 	@Delete("delete from question where id=#{id}")
 	void delete(long id);
 	
-	@Update("update question set sort=#{sort},title=#{title},`type`=#{type},suite_id=#{suiteId},subject_id=#{subjectId},score=#{score},options=#{options},answers=#{answers},description=#{description},images=#{images},ass_images=#{assImages},gmt_modified=now() where id=#{id}")
+	@Update("update question set sort=#{sort},title=#{title},`type`=#{type},suite_id=#{suiteId},subject_id=#{subjectId},score=#{score},options=#{options},answers=#{answers},description=#{description},adjunct=#{adjunct},ass_adjunct=#{assAdjunct},adjunct_type=#{adjunctType},ass_adjunct_type=#{assAdjunctType},gmt_modified=now() where id=#{id}")
 	void update(Question question);
 	
 	@Update("update question set suite_id=#{suiteId} where id in (${ids})")

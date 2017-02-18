@@ -6,6 +6,13 @@ public class Sys extends Entity {
 	
 	private String sysKey;
 	private String sysValue;
+	private String sysComment;
+	public String getSysComment() {
+		return sysComment;
+	}
+	public void setSysComment(String sysComment) {
+		this.sysComment = sysComment;
+	}
 	public String getSysKey() {
 		return sysKey;
 	}

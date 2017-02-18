@@ -29,14 +29,14 @@
         <div class="layui-main" style="" id="app">
         	<div class="form-horizontal" style="width:600px;margin:auto;">
 			  <div class="form-group">
-			    <label class="col-md-2 control-label">试卷名称</label>
-			    <div class="col-md-10">
-			      <input v-model="suites.title" type="text" class="form-control" placeholder="text">
+			    <label class="col-md-3 control-label">试卷名称</label>
+			    <div class="col-md-9">
+			      <input v-model="suites.title" type="text" class="form-control" placeholder="试卷名称">
 			    </div>
 			  </div>
 			  <div class="form-group">
-			    <label class="col-md-2 control-label">所属科目</label>
-			    <div class="col-md-10">
+			    <label class="col-md-3 control-label">所属科目</label>
+			    <div class="col-md-9">
 			    	<select v-model="suites.subjectId" class="form-control">
 			    		<c:forEach var="e" items="${subs }">
 			    			<option value="${e.id }">${e.name }</option>
@@ -45,7 +45,7 @@
 			    </div>
 			  </div>
 			  <div class="form-group">
-			    <label class="col-md-2 control-label">年月份</label>
+			    <label class="col-md-3 control-label">年月份</label>
 			    <div class="input-group">
 			      <div class="input-group-addon">年</div>
 			      <input v-model="suites.years" type="text" class="form-control">
@@ -54,8 +54,8 @@
 			    </div>
 			  </div>
 			  <div class="form-group">
-			  	<label for="" class="col-md-2 control-label">试题</label>
-			  	<div class="col-md-10">
+			  	<label for="" class="col-md-3 control-label">试题</label>
+			  	<div class="col-md-9">
 			  		<div class="col-md-12">
 			  			<button v-on:click="addQuestion" class="btn btn-primary">增加题目</button>
 			  		</div>
@@ -65,9 +65,15 @@
 			  	</div>
 			  </div>
 			  <div class="form-group">
-			  	<label for="" class="col-md-2 control-label">试卷总分数</label>
-			  	<div class="col-md-10">
-			  		<input type="text" v-model="scoref" readonly class="form-control">
+			  	<label for="" class="col-md-3 control-label">试卷总分数</label>
+			  	<div class="col-md-9">
+			  		<input type="text" v-model="suites.score" readonly class="form-control">
+			  	</div>
+			  </div>
+			  <div class="form-group">
+			  	<label for="" class="col-md-3 control-label">答卷时间(分钟)</label>
+			  	<div class="col-md-9">
+			  		<input type="text" v-model="timing" class="form-control">
 			  	</div>
 			  </div>
 			  <div class="form-group">
@@ -117,11 +123,18 @@
 			  	</div>
 			  </div>
 			  <div class="form-group">
-			  	<label for="" class="col-md-2 control-label">题目图片</label>
+			  	<label for="" class="col-md-2 control-label">题目附件</label>
 			  	<div class="col-md-10" id="qstn_imagep">
 			  		<div class="input-group">
+			      	  <div class="input-group-addon" style="width: 120px;">
+			      	  	<select id="qstn_adjunct_type" style="width: 120px;position: absolute;left:0;top:0;bottom:0;">
+			      	  		<option value="0">图片</option>
+			      	  		<option value="1">音频</option>
+			      	  		<option value="2">视频</option>
+			      	  	</select>
+			      	  </div>
 				      <input id="qstn_image" type="text" class="form-control">
-				      <div onclick="up(0)" class="input-group-addon pointer">上传图片</div>
+				      <div onclick="up(0)" class="input-group-addon pointer">上传附件</div>
 				    </div>
 			  	</div>
 			  </div>
@@ -142,11 +155,18 @@
 			  	</div>
 			  </div>
 			  <div class="form-group">
-			  	<label for="" class="col-md-2 control-label">答案图片</label>
+			  	<label for="" class="col-md-2 control-label">答案附件</label>
 			  	<div class="col-md-10" id="qstn_ass_imagep">
 			  		<div class="input-group">
+			  			<div class="input-group-addon" style="width: 120px;">
+			      	  		<select id="qstn_ass_adjunct_type" style="width: 120px;position: absolute;left:0;top:0;bottom:0;">
+				      	  		<option value="0">图片</option>
+				      	  		<option value="1">音频</option>
+				      	  		<option value="2">视频</option>
+			      	  		</select>
+			      	  </div>
 				      <input id="qstn_ass_image" type="text" class="form-control">
-				      <div onclick="up(1)" class="input-group-addon pointer">上传图片</div>
+				      <div onclick="up(1)" class="input-group-addon pointer">上传附件</div>
 				    </div>
 			  	</div>
 			  </div>
@@ -262,8 +282,10 @@ var up = function(t) {
       		$('#qstn_code').val(opts.sort || (+((vm.questions[vm.questions.length - 1]||{}).sort||0) + 1));
       		$('#qstn_type').val(opts.type || 1);
       		$('#qstn_title').val(opts.title || '');
-          	$('#qstn_image').val(opts.images || '');
-          	$('#qstn_ass_image').val(opts.assImages || '');
+          	$('#qstn_image').val(opts.adjunct || '');
+          	$('#qstn_ass_image').val(opts.assAdjunct || '');
+          	$('#qstn_adjunct_type').val(opts.adjunctType || 0);
+          	$('#qstn_ass_adjunct_type').val(opts.assAdjunctType || 0);
       		//$('#qstn_imagep').html('<input id="qstn_image" type="file" class="form-control">');
       		//$('#qstn_ass_imagep').html('<input id="qstn_ass_image" type="file" class="form-control">');
       		$('#qstn_score').val(opts.score || '');
@@ -368,8 +390,10 @@ var up = function(t) {
        				options: JSON.stringify(options),
        				answers: JSON.stringify(answers),
        				description: $('#qstn_desc').val(),
-       				images: $('#qstn_image').val(),
-       				assImages: $('#qstn_ass_image').val()
+       				adjunct: $('#qstn_image').val(),
+       				assAdjunct: $('#qstn_ass_image').val(),
+       				adjunctType: $.trim($('#qstn_adjunct_type').val()),
+       				assAdjunctType: $.trim($('#qstn_ass_adjunct_type').val())
       			};
       			if (!/^\d+$/.test(qobj.sort)) {
       				layer.msg('编号输入错误,只能是数字');
@@ -379,7 +403,7 @@ var up = function(t) {
       				layer.msg('分数输入错误,只能是数字');
       				return;
       			}
-      			if ((qstnType == 1 || qstnType == 2 || qstnType == 3) && qobj.answers == '') {
+      			if ((qstnType == 1 || qstnType == 2 || qstnType == 3) && answers.length == 0) {
       				layer.msg('请选择一个答案');
       				return;
       			}
@@ -478,13 +502,15 @@ var up = function(t) {
             data: {
 			  ssid: 0,      
 			  scoref: 0,
+			  timing: 0,
               suites: {
                 title: '',
-                subjectId: 1,
+                subjectId: 0,
                 years: '',
                 months: '',
                 questions: 0,
-                score: 0
+                score: 0,
+  			  	timing: 0
               },
               questions: [],
               subjectId: 1
@@ -528,13 +554,39 @@ var up = function(t) {
               insert: function() {
                 var that = this;
                 that.suites.questions = that.questions.length;
-                that.suites.score = that.suites.scoref * 10;
-                var s = JSON.parse(JSON.stringify(that.suites));
-                delete s.scoref;
-                var ids = [];
+                if (this.suites.title == '') {
+                	layer.msg('试卷名称不能为空');
+                	return;
+                }
+                if (this.suites.subjectId == 0) {
+                	layer.msg('请选择科目类型');
+                	return;
+                }
+                if (this.suites.years == '' || !/^\d+$/.test(this.suites.years)) {
+                	layer.msg('试卷年份输入错误,只能是数字');
+                	return;
+                }
+                if (this.suites.months == '' || !/^\d+$/.test(this.suites.months)) {
+                	layer.msg('试卷月份输入错误,只能是数字');
+                	return;
+                }
+                if (this.suites.questions == 0) {
+                	layer.msg('请添加题目');
+                	return;
+                }
+                if (!/^\d+$/.test(this.timing) || this.timing <= 0) {
+                	layer.msg('请输入正确的答卷时间');
+                	return;
+                }
+                this.suites.timing = this.timing * 60;
+                var ids = [], _score = 0;
                 $.each(that.questions, function(i, e) {
                 	ids.push(e.id);
+                	_score += +e.score;
                 });
+                this.suites.score = _score;
+
+                var s = JSON.parse(JSON.stringify(that.suites));
                 if (that.ssid > 0) {
                 	$.ajax({
                         url: root + '/admin/suite/update',
@@ -569,20 +621,24 @@ var up = function(t) {
               }
             }, // end methods
             mounted: function() {
-            	var that = this, ssid = $('#suite_id').val();
-            	that.ssid = ssid;
-            	if (ssid > 0) {
-					var __I = layer.load();
-                	$.ajax({
-                		url: root + '/admin/suite/load/qstn',
-                		data: {id: ssid},
-                		success: function(r) {
-                			layer.close(__I);
-                			that.suites = r.data.suite;
-                			that.questions = r.data.questions;
-                		}
-                	});
-            	}
+            	var that = this;
+            	that.$nextTick(function() {
+            		var ssid = $('#suite_id').val();
+                	that.ssid = ssid;
+                	if (ssid > 0) {
+    					var __I = layer.load();
+                    	$.ajax({
+                    		url: root + '/admin/suite/load/qstn',
+                    		data: {id: ssid},
+                    		success: function(r) {
+                    			layer.close(__I);
+                    			that.suites = r.data.suite;
+                    			that.timing = that.suites.timing / 60;
+                    			that.questions = r.data.questions;
+                    		}
+                    	});
+                	}
+            	});
             }
           });
       });

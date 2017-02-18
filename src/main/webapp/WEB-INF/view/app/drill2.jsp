@@ -12,10 +12,10 @@
 <link rel="stylesheet" href="${root}/static/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" href="${root}/static/lib/jquery.mobile-1.4.5.min.css">
 <script src="${root}/static/lib/jquery.min.js"></script>
-<script src="${root}/static/lib/jquery.mobile-1.4.5.min.js"></script>
 <script src="${root}/static/lib/vue.min.js"></script>
 <script src="${root}/static/lay/mobile/layer.js"></script>
 <script src="${root}/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="${root}/static/lib/iscroll.js"></script>
 <style>
 body {background: #f2f7fa;    font-family: "Microsoft YaHei",'微软雅黑';}
 img {max-width: 100%;}
@@ -100,7 +100,6 @@ display: inline-block;
 }
 .content {
 margin-bottom: 50px;
-margin-top: 52px;
 }
 .fbr{
     border-right: 1px solid #e0e0e0;
@@ -145,6 +144,26 @@ background: #ccc;
     text-align: center;
     background: #f0f0f0;
 }
+.scroller {
+	position: absolute;
+	z-index: 1;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-text-size-adjust: none;
+	-moz-text-size-adjust: none;
+	-ms-text-size-adjust: none;
+	-o-text-size-adjust: none;
+	text-size-adjust: none;
+}
 </style>
 <script>root='${root}';</script>
 </head>
@@ -152,48 +171,40 @@ background: #ccc;
 <input type="hidden" id="suite_id" value="${suite.id }" />
 <input type="hidden" id="subject_id" value="${suite.subjectId }" />
 <div id="app" v-cloak>
-	<div class="container content">
+	<div class="container content" v-bind:style="{width: width+'px'}">
 		<h3>第{{questions[current].sort}}题 ({{questions[current].score}}分):</h3>
-		<div>
-			<div class="qstn-title">
-				<span class="qstn-type">{{questions[current].type | qstnType}}</span>
-				<span class="qstn-cnt">{{questions[current].title}}</span>
-			</div>
-			<div v-show="questions[current].adjunct!=''" class="center m10t">
-				<img v-if="questions[current].adjunctType==0" v-bind:src="'${root }/down?path='+questions[current].adjunct">
-				<audio v-if="questions[current].adjunctType==1" :src="'${root }/down?path='+questions[current].adjunct" controls="controls">
-					Your browser does not support the audio element.
-				</audio>
-				<video v-if="questions[current].adjunctType==2" :src="'${root }/down?path='+questions[current].adjunct" controls="controls">
-					Your browser does not support the video tag.
-				</video>
-			</div>
-		</div>
-		<div :class="{hide: questions[current].type==4}" v-for="(e, i) in options" class="opts" @click="solve(i)">
-			<span class="opts-chs" :class="{'opt-multi': !!multis[i]}" v-html="optFilter(i)"></span>
-			<div class="opts-cnt">{{e}}</div>
-		</div>
-		<div :class="{hide: questions[current].type!=4}" style="padding: 10px;margin: 10px;border: 1px solid #e0e0e0;">
-			<textarea v-bind:class="{rd: ro}" v-bind:readonly="ro" v-bind:readonly="ro" v-model="sa" rows="7" style="width:100%;resize: none;" placeholder="在这里回答"></textarea>
-			<button @click="sas" class="btn btn-info" style="width:100%;">提交</button>
-		</div>
-		<div :class="{hide: hidea}">
-			<h3>试题详解:</h3>
-			<span>{{questions[current].description}}</span>
-			<div v-show="questions[current].assAdjunct!=''" class="center m10t">
-				<img v-if="questions[current].assAdjunctType==0" v-bind:src="'${root }/down?path='+questions[current].assAdjunct">
-				<audio v-if="questions[current].assAdjunctType==1" :src="'${root }/down?path='+questions[current].assAdjunct" controls="controls">
-					Your browser does not support the audio element.
-				</audio>
-				<video v-if="questions[current].assAdjunctType==2" :src="'${root }/down?path='+questions[current].assAdjunct" controls="controls">
-					Your browser does not support the video tag.
-				</video>
+		<div id="wrapper" style="" v-bind:style="{width: width+'px'}">
+			<div class="scroller" style="display:flex;">
+				<div v-for="item in questions" v-bind:style="{width: width+'px'}">
+					<div class="qstn-title">
+						<span class="qstn-type">{{item.type | qstnType}}</span>
+						<span class="qstn-cnt">{{item.title}}</span>
+					</div>
+					<div v-show="item.images!=''" class="center m10t">
+						<img v-bind:src="'${root }/down?path='+item.images">
+					</div>
+					<div :class="{hide: item.type==4}" v-for="(e, i) in parse(item.options)" class="opts" @click="solve(i)">
+						<span class="opts-chs" :class="{'opt-multi': !!multis[i]}" v-html="optFilter(i)"></span>
+						<div class="opts-cnt">{{e}}</div>
+					</div>
+					<div :class="{hide: item.type!=4}" style="padding: 10px;margin: 10px;border: 1px solid #e0e0e0;">
+						<textarea v-bind:class="{rd: ro}" v-bind:readonly="ro" v-bind:readonly="ro" v-model="sa" rows="7" style="width:100%;resize: none;" placeholder="在这里回答"></textarea>
+						<button @click="sas" class="btn btn-info" style="width:100%;">提交</button>
+					</div>
+					<div :class="{hide: hidea}">
+						<h3>试题详解:</h3>
+						<span>{{item.description}}</span>
+						<div v-show="item.assImages!=''" class="center m10t">
+							<img v-bind:src="'${root }/down?path='+item.assImages">
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 	<div class="header">
 		<span style="flex:1;"></span>
-		<span style="flex:2;font-size: 2rem;">练习</span>
+		<span style="flex:2;font-size: 2rem;">模拟考试</span>
 		<span style="flex:1;text-decoration: none;" class="glyphicon glyphicon-home" @click="home"></span>
 	</div>
 	<div class="footer">
@@ -206,22 +217,30 @@ background: #ccc;
 </div>
 </body>
 <script>
-	$(function() { 
-		$.event.special.swipe.horizontalDistanceThreshold = 100;
-		$('body').on("swipeleft",function(){
-			  if (vm.current < vm.questions.length - 1) {
-				  vm.current ++;
-			  }
+	$(function() {
+
+		document.addEventListener('touchmove', function (e) { e.preventDefault(); }, {
+			capture: false,
+			passive: false
 		});
-		$('body').on("swiperight",function(){
-			  if (vm.current > 0) {
-				  vm.current --;
-			  }
+		Vue.nextTick(function() {
+			new IScroll('#wrapper', {
+				scrollX: true,
+				scrollY: false,
+				momentum: false,
+				snap: true,
+				snapSpeed: 400,
+				keyBindings: true
+			});
 		});
+		window.onresize = function() {
+			vm.width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+		};
 		//var 
 		vm = new Vue({
 			el: '#app',
 			data: {
+				width: (window.innerWidth > 0) ? window.innerWidth : screen.width,
 				step: 1,
 				subjects: [],
 				subjectId: 0,
@@ -258,6 +277,10 @@ background: #ccc;
 				}
 			},
 			methods: {
+				parse: function(v) {
+					if (!v) return [];
+					return JSON.parse(v);
+				},
 				optFilter: function(v) {
 					var a = String.fromCharCode(65 + (v||0)), cls = 0, ret = String.fromCharCode(65 + (v||0));
 					var ans = this.answer || [], r = this.answers[this.current];

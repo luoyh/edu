@@ -20,7 +20,7 @@ public class JsonTools {
 					   "\"scope\":\"SCOPE\","+
 					   "\"unionid\": \"o6_bmasdasdsad6_2sgVt7hMZOPfL\""+
 					"}", Map.class);
-		System.out.println(map.get("unionid"));
+		System.out.println(map.get("expires_in").getClass());
 	}
 	
 	private static ObjectMapper mapper;

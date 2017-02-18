@@ -10,8 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.edu.roy.wx.comm.Cons;
 import com.edu.roy.wx.comm.HttpResult;
+import com.edu.roy.wx.service.SysService;
 import com.edu.roy.wx.tools.HttpTools;
 import com.edu.roy.wx.tools.JsonTools;
 import com.edu.roy.wx.tools.UuidTools;
@@ -34,11 +37,24 @@ import com.edu.roy.wx.tools.UuidTools;
 @Controller
 public class MianController extends BaseController {
 
+	@Autowired
+	private SysService sysService;
+	
 	private static Logger log = LoggerFactory.getLogger(MianController.class);
 
 	@RequestMapping(value = "/")
 	public String m(String username, String password, HttpServletRequest request) {
 		return "index";
+	}
+	
+
+	@RequestMapping(value = "/refresh/config")
+	public ResponseEntity<String> refreshConfig(String password, HttpServletRequest request) {
+		if (StringUtils.isBlank(password) || !password.equals(sysMap().get(Cons.SysKey.REFRESH_CONFIG_PASSWORD.code))) {
+			return ResponseEntity.badRequest().body("u k m?");
+		}
+		sysService.init();
+		return ResponseEntity.<String>ok("success!");
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)

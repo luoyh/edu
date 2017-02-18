@@ -36,14 +36,21 @@ public class DrillResult extends Entity {
 		
 	}
 	
+	
 	private long memberId;
 	private long subjectId;
 	private long suiteId; // type < 0 is suiteId
 	private int type;	// -2:drill,-1:exam,0:all,1:single,2:multi,3:judge,4:solve,5:other
 	private long targetId; // type < 0 is suiteId else questionId
 	private int score;
+	private int status; // 0:unchecked, 1:checked
 	
-	
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
 	public long getSuiteId() {
 		return suiteId;
 	}

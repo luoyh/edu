@@ -51,7 +51,7 @@
 	            <td v-text="s.questions"></td>
 	            <td>{{s.gmtCreated | date}}</td>
 	            <td>
-	              <button class="layui-btn layui-btn-small layui-btn-danger">删除</button>
+	              <button @click="del(s.id)" class="layui-btn layui-btn-small layui-btn-danger">删除</button>
 	              <button v-on:click="edit(s.id)" class="layui-btn layui-btn-small layui-btn-normal">编辑</button>
 	            </td>
 	          </tr>
@@ -115,17 +115,30 @@
               },
               edit: function(id) {
             	  window.location.href = root + '/admin/suite/modify?id='+id
+              },
+              del: function(id) {
+            	  var that = this;
+            	  $.ajax({
+              		url: root + '/admin/suite/delete',
+              		method: 'POST',
+              		data: {id: id},
+              		success: function(r) {
+              			that.search();
+              		}
+              	}); 
               }
             },
             mounted: function() {
             	var that = this;
-            	$.ajax({
-            		url: root + '/admin/subject/list',
-            		success: function(r) {
-            			that.subjects = r.data;
-            		}
+            	this.$nextTick(function() {
+            		$.ajax({
+                		url: root + '/admin/subject/list',
+                		success: function(r) {
+                			that.subjects = r.data;
+                		}
+                	});
+                	that.search();
             	});
-            	that.search();
             }
           });
       });

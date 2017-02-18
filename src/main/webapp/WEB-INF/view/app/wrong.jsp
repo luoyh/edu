@@ -150,8 +150,14 @@ background: #ccc;
 				<span class="qstn-type">{{questions[current].type | qstnType}}</span>
 				<span class="qstn-cnt">{{questions[current].title}}</span>
 			</div>
-			<div v-show="questions[current].images!=''" class="center m10t">
-				<img v-bind:src="'${root }'+questions[current].images">
+			<div v-show="questions[current].adjunct!=''" class="center m10t">
+				<img v-if="questions[current].adjunctType==0" v-bind:src="'${root }/down?path='+questions[current].adjunct">
+				<audio v-if="questions[current].adjunctType==1" :src="'${root }/down?path='+questions[current].adjunct" controls="controls">
+					Your browser does not support the audio element.
+				</audio>
+				<video v-if="questions[current].adjunctType==2" :src="'${root }/down?path='+questions[current].adjunct" controls="controls">
+					Your browser does not support the video tag.
+				</video>
 			</div>
 		</div>
 		<div :class="{hide: questions[current].type==4}" v-for="(e, i) in options" class="opts" @click="solve(i)">
@@ -165,8 +171,14 @@ background: #ccc;
 		<div :class="{hide: hidea}">
 			<h3>试题详解:</h3>
 			<span>{{questions[current].description}}</span>
-			<div v-show="questions[current].assImages!=''" class="center m10t">
-				<img v-bind:src="questions[current].assImages">
+			<div v-show="questions[current].assAdjunct!=''" class="center m10t">
+				<img v-if="questions[current].assAdjunctType==0" v-bind:src="'${root }/down?path='+questions[current].assAdjunct">
+				<audio v-if="questions[current].assAdjunctType==1" :src="'${root }/down?path='+questions[current].assAdjunct" controls="controls">
+					Your browser does not support the audio element.
+				</audio>
+				<video v-if="questions[current].assAdjunctType==2" :src="'${root }/down?path='+questions[current].assAdjunct" controls="controls">
+					Your browser does not support the video tag.
+				</video>
 			</div>
 		</div>
 	</div>

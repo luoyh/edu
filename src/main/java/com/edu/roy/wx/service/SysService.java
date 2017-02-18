@@ -9,6 +9,7 @@ import javax.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.edu.roy.wx.comm.Cons;
 import com.edu.roy.wx.dao.SysMapper;
 import com.edu.roy.wx.model.Sys;
 import com.google.common.collect.Maps;
@@ -32,7 +33,7 @@ public class SysService {
 		for (Sys sys : list) {
 			sysConfig.put(sys.getSysKey(), sys.getSysValue());
 		}
-		context.setAttribute("sysConfig", sysConfig);
+		context.setAttribute(Cons.SYS_CONFIG_CONTEXT_KEY, sysConfig);
 	}
 
 }

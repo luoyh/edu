@@ -38,7 +38,8 @@ public interface ResultMapper {
 	@Update("update wrong_result set cnd=1 where id in (${ids})")
 	void updateWronged(@Param("ids") String ids);
 	
-	@Select("select a.*,b.title suiteTitle,c.`name` subjectName,(select count(*) from drill_record where member_id=1) as total,(select count(*) from wrong_result where member_id=1) as wrongs from drill_result a join suite b on a.suite_id=b.id join `subject` c on a.subject_id=c.id  where a.member_id=#{memberId} order by a.gmt_created desc")
+	//@Select("select a.*,b.title suiteTitle,c.`name` subjectName,(select count(*) from drill_record where member_id=1) as total,(select count(*) from wrong_result where member_id=1) as wrongs from drill_result a join suite b on a.suite_id=b.id join `subject` c on a.subject_id=c.id  where a.member_id=#{memberId} order by a.gmt_created desc")
+	@Select("SELECT a.*, c.`name` subjectName, d.title suiteTitle FROM drill_result a JOIN ( SELECT max(score) s, member_id, subject_id FROM drill_result WHERE member_id=#{memberId} GROUP BY subject_id ) b ON a.score = b.s AND a.member_id = b.member_id AND a.subject_id = b.subject_id JOIN `subject` c ON a.subject_id = c.id JOIN suite d ON a.suite_id = d.id WHERE a.member_id=#{memberId} GROUP BY subject_id")
 	List<HomeResultVO> home(long memberId);
 
 	List<ResultVO> page(Page<ResultVO> param);

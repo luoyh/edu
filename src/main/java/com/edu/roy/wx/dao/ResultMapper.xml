@@ -4,9 +4,9 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.edu.roy.wx.dao.ResultMapper">
 	<insert id="examed" parameterType="map">
-		insert into drill_record(member_id, result_id, type, result, subject_id, suite_id, question_id, answers, gmt_created, gmt_modified) values
+		insert into drill_record(member_id, result_id, type, result, subject_id, suite_id, question_id, answers, score, gmt_created, gmt_modified) values
 		<foreach collection="data" item="e" separator=",">
-		(#{memberId}, #{resultId}, #{e.type}, #{e.result}, #{subjectId}, #{suiteId}, #{e.questionId}, #{e.answers}, now(), now())
+		(#{memberId}, #{resultId}, #{e.type}, #{e.result}, #{subjectId}, #{suiteId}, #{e.questionId}, #{e.answers}, #{e.score}, now(), now())
 		</foreach>
 	</insert>
 	<insert id="wrongsSave" parameterType="map">

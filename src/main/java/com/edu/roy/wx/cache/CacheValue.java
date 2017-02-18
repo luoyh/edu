@@ -1,7 +1,5 @@
 package com.edu.roy.wx.cache;
 
-import org.apache.commons.lang3.time.DateUtils;
-
 /**
  * 
  * @author luoyh

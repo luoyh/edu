@@ -174,8 +174,14 @@ display: block!important;
 				<span class="qstn-type">{{questions[current].type | qstnType}}</span>
 				<span class="qstn-cnt">{{questions[current].title}}</span>
 			</div>
-			<div v-show="questions[current].images!=''" class="center m10t">
-				<img v-bind:src="'${root }/down?path='+questions[current].images">
+			<div v-show="questions[current].adjunct!=''" class="center m10t">
+				<img v-if="questions[current].adjunctType==0" v-bind:src="'${root }/down?path='+questions[current].adjunct">
+				<audio v-if="questions[current].adjunctType==1" :src="'${root }/down?path='+questions[current].adjunct" controls="controls">
+					Your browser does not support the audio element.
+				</audio>
+				<video v-if="questions[current].adjunctType==2" :src="'${root }/down?path='+questions[current].adjunct" controls="controls">
+					Your browser does not support the video tag.
+				</video>
 			</div>
 		</div>
 		<div :class="{hide: questions[current].type==4}" v-for="(e, i) in options" class="opts" @click="solve(i)">
@@ -189,8 +195,14 @@ display: block!important;
 		<div :class="{hide: !finished}">
 			<h3>试题详解:</h3>
 			<span>{{questions[current].description}}</span>
-			<div v-show="questions[current].assImages!=''" class="center m10t">
-				<img v-bind:src="'${root }/down?path='+questions[current].assImages">
+			<div v-show="questions[current].assAdjunct!=''" class="center m10t">
+				<img v-if="questions[current].assAdjunctType==0" v-bind:src="'${root }/down?path='+questions[current].assAdjunct">
+				<audio v-if="questions[current].assAdjunctType==1" :src="'${root }/down?path='+questions[current].assAdjunct" controls="controls">
+					Your browser does not support the audio element.
+				</audio>
+				<video v-if="questions[current].assAdjunctType==2" :src="'${root }/down?path='+questions[current].assAdjunct" controls="controls">
+					Your browser does not support the video tag.
+				</video>
 			</div>
 		</div>
 	</div>
@@ -413,13 +425,15 @@ display: block!important;
 							data.push({
 								questionId: m.id,
 								answers: JSON.stringify(_ans.r),
-								result: m.type < 4 ? _ans.s > 0 ? 2 : 3 : 1 
+								result: m.type < 4 ? _ans.s > 0 ? 2 : 3 : 1,
+								score: _ans.s || 0
 							});
 						} else {
 							data.push({
-								id: m.id,
+								questionId: m.id,
 								answers: '',
-								result: 3
+								result: 3,
+								score: 0
 							});
 						}
 					});
@@ -510,6 +524,7 @@ display: block!important;
 			mounted: function() {
 				var that = this;
 				this.$nextTick(function() {
+					that.timing = $('#suite_timing').val()*1;
 					that.time();
 					that.loadQuestions();
 				});

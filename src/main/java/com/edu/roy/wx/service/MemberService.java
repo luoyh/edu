@@ -29,6 +29,10 @@ public class MemberService {
 		return memberMapper.findOfOpenid(openid);
 	}
 	
+	public Member findById(long id) {
+		return memberMapper.findById(id);
+	}
+	
 	public List<Member> list() {
 		return memberMapper.list();
 	}

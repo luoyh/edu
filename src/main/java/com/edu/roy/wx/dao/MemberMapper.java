@@ -14,13 +14,16 @@ public interface MemberMapper {
 	@Select("select * from member")
 	List<Member> list();
 	
-	@Insert("insert into member(openid,mobile,name,age,school,sex,gmt_created,gmt_modified) values(#{openid},#{mobile},#{name},#{age},#{school},#{sex},now(),now())")
+	@Insert("insert into member(openid,mobile,name,age,school,sex,base_wx_info,gmt_created,gmt_modified) values(#{openid},#{mobile},#{name},#{age},#{school},#{sex},#{baseWxInfo},now(),now())")
 	void insert(Member member);
 
 	List<Member> page(Page<Member> page);
 	
 	@Select("select * from member where openid=#{openid}")
 	Member findOfOpenid(String openid);
+	
+	@Select("select * from member where id=#{id}")
+	Member findById(long id);
 	
 	@Select("select * from member where openid=#{openid} or mobile=#{mobile}")
 	List<Member> check(@Param("openid") String openid, @Param("mobile") String mobile);
