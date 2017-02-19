@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.edu.roy.wx.comm.HttpResult;
 import com.edu.roy.wx.service.ResultService;
@@ -38,6 +39,12 @@ public class ResultController extends BaseController {
 			return bad(HttpResult.me(HttpResult.ERR));
 		}
 		return ok(HttpResult.me(HttpResult.OK, null, resultService.questionResult(resultId)));
+	}
+	
+	@RequestMapping(value = "/question/check", method = RequestMethod.POST)
+	public ResponseEntity<HttpResult> check(Long questionId, Integer score, Integer val) {
+		
+		return null;
 	}
 
 

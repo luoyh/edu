@@ -57,7 +57,8 @@ create table drill_record (
 	score int not null,
 	gmt_created datetime not null,
 	gmt_modified datetime not null,
-	primary key(id)
+	primary key(id),
+	UNIQUE KEY `uidx_r_question` (`result_id`,`question_id`)
 ) engine=innodb default charset=utf8 comment '答题记录表';
 ```
 

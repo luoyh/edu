@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.edu.roy.wx.comm.Page;
+import com.edu.roy.wx.model.DrillRecord;
 import com.edu.roy.wx.model.DrillResult;
 import com.edu.roy.wx.model.WrongResult;
 import com.edu.roy.wx.vo.HomeResultVO;
@@ -49,4 +50,13 @@ public interface ResultMapper {
 	
 	@Insert("insert into wrong_result(member_id, subject_id, suite_id, question_id, answers, cnd, gmt_created, gmt_modified) values(#{memberId}, #{subjectId}, #{suiteId}, #{questionId}, #{answers}, #{cnd}, now(), now()) on duplicate key update cnd=0")
 	void joinWrong(WrongResult wrongResult);
+	
+	@Insert("insert into drill_record(member_id,result_id,`type`,result,subject_id,suite_id,question_id,answers,score,gmt_created,gmt_modified) values(#{memberId},#{resultId},#{type},#{result},#{subjectId},#{suiteId},#{questionId},#{answers},#{score}) on duplicate key update score=#{score}")
+	void checkedQuestion(DrillRecord drillRecord);
+	
+	@Update("update drill_result set score = (select sum(score) from drill_record where result_id=#{resultId}) where id=#{resultId}")
+	void refreshResultScore(long resultId);
+	
+	@Update("update drill_result set `status`=1 where id=#{resultId}")
+	void checkedResult(long resultId);
 }
