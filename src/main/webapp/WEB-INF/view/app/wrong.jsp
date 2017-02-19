@@ -185,7 +185,7 @@ background: #ccc;
 	<div class="header">
 		<span style="flex:1;"></span>
 		<span style="flex:2;font-size: 2rem;">模拟考试</span>
-		<a style="flex:1;text-decoration: none;" class="glyphicon glyphicon-home" href="${root }/wx/index"></a>
+		<a style="flex:1;text-decoration: none;" class="glyphicon glyphicon-home" href="${root }/wx/home"></a>
 	</div>
 	<div class="footer">
 		<span class="fbr" @click="prev">上一题</span>

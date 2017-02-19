@@ -38,12 +38,31 @@ body {background: #f2f7fa;    font-family: "Microsoft YaHei",'微软雅黑';}
 			<span style="flex:1;">今天是2016年5月21日 星期三 欢迎你: ${member.name }</span>
 			<img style="width: 48px;" :src="memberWxInfo.headimgurl" />
 		</div>
-		<div v-for="e in subject" style="margin: 10px;border: 1px solid #e0e0e0;display: flex;height:30px;line-height:30px;font-size:1.6rem;">
+		<div :class="{hide: step!=0}" v-for="e in subject" style="margin: 10px;border: 1px solid #e0e0e0;display: flex;height:30px;line-height:30px;font-size:1.6rem;">
 			<span style="width: 100px;border-right:1px solid #e0e0e0;font-weight:bold;">{{e.name}}</span>
-			<span style="flex:1;color:#698ebf">模拟考试</span>
-			<span style="flex:1;color:#698ebf">练习模式</span>
-			<span style="flex:1;color:#698ebf">错题</span>
+			<span @click="drill(e.id, 0)" style="flex:1;color:#698ebf">模拟考试</span>
+			<span @click="drill(e.id, 1)" style="flex:1;color:#698ebf">练习模式</span>
+			<a v-bind:href="'${root }/wx/wrong/'+e.id" style="flex:1;color:#698ebf">错题</a>
 		</div>
+		<div class="row" v-bind:class="{hide: step!=1}">
+			<div class="col-xs-12 center">
+				<h3>
+				<a @click="step=0">返回</a>
+				选择试卷</h3>
+			</div>
+			<div class="col-xs-12">
+				<a v-for="e in suites" v-bind:href="'${root }/wx/'+pathType+'/'+e.id" class="btn btn-info subject">{{e.title}}</a>
+			</div>
+		</div>
+		<c:forEach var="item" items="${data }">
+			<div style="display:flex;">
+				<span style="flex:1;">${item.subjectName }</span>
+				<span style="flex:2;">${item.suiteTitle }</span>
+				<span style="flex:1;">${item.score }分</span>
+				<span style="flex:1;"><fmt:formatDate value="${item.gmtCreated }" pattern="yyyy/MM/dd"/></span>
+			</div>
+		</c:forEach>
+		
 		<%-- <div style="margin-top:30px;height: 150px;border: 1px solid #ccc; display:flex;align-items: center;">
 			<span style="flex: 1;border-right: 1px solid #e0e0e0;">
 				<span class="glyphicon glyphicon-th" style="display:block;font-size:2rem;"></span>
@@ -89,7 +108,10 @@ body {background: #f2f7fa;    font-family: "Microsoft YaHei",'微软雅黑';}
 			el: '#app',
 			data: {
 				memberWxInfo: {},
-				subject: []
+				subject: [],
+				step: 0,
+				suites: [],
+				pathType: 'exam'
 			},
 			watch: {
 			},
@@ -105,6 +127,14 @@ body {background: #f2f7fa;    font-family: "Microsoft YaHei",'微软雅黑';}
 				},
 				index: function() { 
 					window.location.href = root + '/app.index/go';
+				},
+				drill: function(sid, t) {
+					var that = this;
+					this.pathType = !t ? 'exam' : 'drill';
+					$.get(root + '/admin/suite/by/subject', {subjectId: sid}, function(r) {
+						that.suites = r.data;
+						that.step = 1;
+					});
 				}
 			},
 			mounted: function() {

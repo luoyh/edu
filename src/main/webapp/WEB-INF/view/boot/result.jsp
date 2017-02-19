@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" isELIgnored="false" trimDirectiveWhitespaces="true"%>
 <%@include file="include.jsp"%>
 <style>
+[v-cloak] {
+  display: none;
+}
 img {
 max-width: 100%;
 }
@@ -43,7 +46,7 @@ max-width: 100%;
   <div class="layui-tab layui-tab-brief" lay-filter="demoTitle">
     <div class="layui-body layui-tab-content site-demo site-demo-body">
       <div class="layui-tab-item layui-show">
-        <div class="layui-main" style="" id="app">
+        <div class="layui-main" style="" id="app" v-cloak>
           <div class="form-inline">
           	<div class="form-group">
           		<label>科目:</label>
@@ -117,14 +120,33 @@ max-width: 100%;
       <div class="modal-body">
       	<div v-for="e in detail">
       		<h3>{{e.sort}}:{{e.title}}</h3>
-      		<p v-show="e.images != ''"><img :src="'${root }/down?path='+e.images" /></p>
-      		<div v-html="result(e)">
+      		<p v-show="e.adjunct != ''">
+      			<img v-if="e.adjunctType == 0" :src="'${root }/down?path='+e.adjunct" />
+      			<audio v-if="e.adjunctType == 1" :src="'${root }/down?path='+e.adjunct" controls="controls">
+      				Your browser can not supports tag audio.
+      			</audio>
+      			<video v-if="e.adjunctType == 2" :src="'${root }/down?path='+e.adjunct" controls="controls">
+      				Your browser can not supports tag video.
+      			</video>
+      		</p>
+      		<div v-html="result(e)"></div>
+      		<div v-if="e.type==4">
+      			得分：<input type="text" />
+      			<button>确定</button>
       		</div>
       		<h4>参考答案：</h4>
       		<p>{{JSON.parse(e.answers).join()}}</p>
    			<h5>分析:</h5>
    			<p>{{e.description}}</p>
-   			<p v-show="e.assImages != ''"><img :src="'${root }/down?path='+e.assImages" /></p>
+   			<p v-show="e.assAdjunct != ''">
+   				<img v-if="e.assAdjunctType == 0" :src="'${root }/down?path='+e.assAdjunct" />
+      			<audio v-if="e.assAdjunctType == 1" :src="'${root }/down?path='+e.assAdjunct" controls="controls">
+      				Your browser can not supports tag audio.
+      			</audio>
+      			<video v-if="e.assAdjunctType == 2" :src="'${root }/down?path='+e.assAdjunct" controls="controls">
+      				Your browser can not supports tag video.
+      			</video>
+   			</p>
       	</div>
       </div>
       <div class="modal-footer">
@@ -217,7 +239,7 @@ max-width: 100%;
 					});
       				return htm;
 				} else {
-					return '<i>'+JSON.parse(item.resultAnswers).join()+'</i>';
+					return '<i>'+JSON.parse(item.resultAnswers||'[]').join()+'</i>';
 				}
 				
 			}

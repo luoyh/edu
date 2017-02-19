@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+<title>招考重庆</title>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="lib/jquery.mobile-1.4.5.min.css">
+<script src="lib/jquery.min.js"></script>
+<script src="lib/vue.min.js"></script>
+<script src="lay/mobile/layer.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="lib/iscroll.js"></script>
+<style>
+body {background: #f2f7fa;    font-family: "Microsoft YaHei",'微软雅黑';}
+img {max-width: 100%;}
+.m10{margin:10px;}
+.m10t{margin-top:10px;}
+.m10r{margin-right:10px;}
+.m10b{margin-bottom: 10px;}
+.m10l{margin-left:10px;}
+.p10 {padding:10px;}
+.center{text-align: center;}
+.hide{display:none;}
+[v-cloak] {
+  display: none;
+}
+.subject {
+	height: 50px;
+	text-align: center;
+	width:100%;
+	padding: 20px;
+	margin-top: 20px;
+}
+.opts {
+	padding: 10px;
+	margin: 10px;
+	border: 1px solid #e0e0e0;
+	display: flex;	
+}
+.qstn {
+padding: 10px;
+}
+.qstn-title {
+display: flex;
+}
+.qstn-type {
+	font-size:17px;
+	width: 25px;
+    height: 25px;
+    background: #18b4ed;
+    color: #fff;
+    text-align: center;
+    display: inline-block;
+    line-height: 25px;
+}
+.qstn-cnt {
+flex: 1;
+display: inline-block;
+padding: 0 10px;
+}
+.opts-chs {
+	width: 30px;
+    height: 30px;
+    border: 1px solid #c8c8c8;
+    border-radius: 100%;
+    text-align: center;
+    font-size: 17px;
+    font-weight: bold;
+    color: #828282;
+    line-height: 30px;
+}
+.opts-cnt {
+flex: 1;
+margin-left: 10px;
+min-height: 30px;
+line-height: 30px;
+font-weight: bold;
+font-size: 1.5rem;
+}
+.footer{
+    position: fixed;
+    width: 100%;
+    height: 50px;
+    background: #fff;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    border-top: 1px solid #ccc;
+}
+.footer span {
+flex: 1;
+display: inline-block;
+}
+.content {
+margin-bottom: 50px;
+}
+.fbr{
+    border-right: 1px solid #e0e0e0;
+}
+.opt-right {
+	color: #fff!important;
+	/*background: #18b4ed!important;*/
+	background: #32b16c!important;
+	display: inline-block;
+	width: 100%;
+	height: 100%;
+	border-radius: 100%;
+}
+
+.opt-multi {
+	color: #fff!important;
+	background: #77c7e4!important;
+	display: inline-block;
+	border-radius: 100%;
+}
+
+.opt-wrong {
+	color: #fff!important;
+	background: #f25e5e!important;
+	display: inline-block;
+	width: 100%;
+	height: 100%;
+	border-radius: 100%;
+}
+.rd {
+background: #ccc;
+}
+.header {
+    position: fixed;
+    width: 100%;
+    height: 50px;
+    background: #fff;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    background: #f0f0f0;
+}
+.scroller {
+	position: absolute;
+	z-index: 1;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-text-size-adjust: none;
+	-moz-text-size-adjust: none;
+	-ms-text-size-adjust: none;
+	-o-text-size-adjust: none;
+	text-size-adjust: none;
+}
+</style>
+<script>root='${root}';</script>
+</head>
+<body>
+<div id="app" v-cloak>
+	<div class="container content" v-bind:style="{width: width+'px', height: height+'px'}">
+		<h3>第{{questions[current].sort}}题 ({{questions[current].score}}分):</h3>
+		<div id="wrapper" style="" v-bind:style="{width: width+'px', height: height+'px'}">
+			<div class="scroller" style="display:flex;">
+				<div v-for="(item, i) in questions" v-bind:style="{width: width+'px'}" style="height: 100%;">
+					{{i}}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="header">
+		<span style="flex:1;"></span>
+		<span style="flex:2;font-size: 2rem;">模拟考试</span>
+		<span style="flex:1;text-decoration: none;" class="glyphicon glyphicon-home" dddddd="home"></span>
+	</div>
+	<div class="footer">
+		<span class="fbr" dddddd="prev">上一题</span>
+		<span class="fbr" dddddd="next">下一题</span>
+		<span class="fbr">{{current+1}}/{{questions.length}}</span>
+		<span style="color:#337ab7;" dddddd="solve(-1)" class="fbr">题解</span>
+		<span style="color:#337ab7;" dddddd="joinWrong()">加入错题</span>
+	</div>
+</div>
+</body>
+<script>
+	$(function() {
+
+		document.addEventListener('touchmove', function (e) { e.preventDefault(); }, {
+			capture: false,
+			passive: false
+		});
+		Vue.nextTick(function() {
+			new IScroll('#wrapper', {
+				scrollX: true,
+				scrollY: false,
+				momentum: false,
+				snap: true,
+				snapSpeed: 400,
+				keyBindings: true
+			});
+		});
+		window.onresize = function() {
+			vm.width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+		};
+		//var 
+		vm = new Vue({
+			el: '#app',
+			data: {
+				width: (window.innerWidth > 0) ? window.innerWidth : screen.width,
+				height: (window.innerHeight > 0) ? window.innerHeight : screen.height,
+				step: 1,
+				subjects: [],
+				subjectId: 0,
+				suites: [],
+				questions: [{},{},{},{},{},{}],
+				current: 0,
+				options: [],
+				answers: {},
+				submits: {},
+				answer: [],
+				clss: ['', 'opt-right', 'opt-wrong'],
+				multis: {},
+				sa: '',
+				ro: false,
+				hidea: true,
+				finished: false,
+				joined: []
+			},
+			watch: {
+			},
+			filters: {
+			},
+			methods: {
+				
+			},
+			mounted: function() {
+				var that = this;
+				this.$nextTick(function() {
+				});
+			}
+		});
+	});
+</script>
+</html>
