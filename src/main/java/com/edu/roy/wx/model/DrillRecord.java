@@ -25,18 +25,17 @@ public class DrillRecord extends Entity {
 	private long memberId;
 	private long resultId;
 	private int type; // 0:order,1:suite,2:wrong
-	private int result; // 0:void,1:incertitude,2:right,3:wrong,4:part
+	private int status; // 0:un,1:ed
 	private long subjectId; 
 	private long suiteId;
 	private long questionId;
 	private String answers;
 	private int score;
-	
-	public int getScore() {
-		return score;
+	public long getMemberId() {
+		return memberId;
 	}
-	public void setScore(int score) {
-		this.score = score;
+	public void setMemberId(long memberId) {
+		this.memberId = memberId;
 	}
 	public long getResultId() {
 		return resultId;
@@ -44,23 +43,17 @@ public class DrillRecord extends Entity {
 	public void setResultId(long resultId) {
 		this.resultId = resultId;
 	}
-	public long getMemberId() {
-		return memberId;
-	}
-	public void setMemberId(long memberId) {
-		this.memberId = memberId;
-	}
 	public int getType() {
 		return type;
 	}
 	public void setType(int type) {
 		this.type = type;
 	}
-	public int getResult() {
-		return result;
+	public int getStatus() {
+		return status;
 	}
-	public void setResult(int result) {
-		this.result = result;
+	public void setStatus(int status) {
+		this.status = status;
 	}
 	public long getSubjectId() {
 		return subjectId;
@@ -86,7 +79,11 @@ public class DrillRecord extends Entity {
 	public void setAnswers(String answers) {
 		this.answers = answers;
 	}
+	public int getScore() {
+		return score;
+	}
+	public void setScore(int score) {
+		this.score = score;
+	}
 
 }
-
-

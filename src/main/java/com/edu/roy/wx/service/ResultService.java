@@ -51,7 +51,7 @@ public class ResultService {
 		List<DrillRecord> ldr = JsonTools.readList(data, new TypeReference<List<DrillRecord>>() {});
 		List<WrongResult> lwr = Lists.newArrayList();
 		for (DrillRecord dr : ldr) {
-			if (dr.getResult() != DrillRecord.Result.RIGHT.code && dr.getResult() != DrillRecord.Result.INCERTITUDE.code) {
+			if (dr.getScore() == 0 && dr.getStatus() == 1) {
 				WrongResult wr = new WrongResult();
 				wr.setAnswers(dr.getAnswers());
 				wr.setQuestionId(dr.getQuestionId());
@@ -126,8 +126,19 @@ public class ResultService {
 		return page;
 	}
 	
-	public List<QuestionResultVO> questionResult(long resultId) {
-		return resultMapper.questionResult(resultId);
+	public List<QuestionResultVO> questionResult(long resultId, long suiteId) {
+		return resultMapper.questionResult(resultId, suiteId);
+	}
+	
+	public void checkedQuestion(DrillRecord drillRecord) {
+		//#{memberId},#{resultId},#{type},#{result},#{subjectId},#{suiteId},#{questionId},#{answers},#{score}
+		//DrillRecord drillRecord = new DrillRecord();
+		resultMapper.checkedQuestion(drillRecord);
+		resultMapper.refreshResultScore(drillRecord.getResultId());
+	}
+	
+	public void overExam(long resultId) {
+		resultMapper.checkedResult(resultId);
 	}
 	
 }

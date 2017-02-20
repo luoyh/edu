@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.edu.roy.wx.comm.HttpResult;
+import com.edu.roy.wx.model.DrillRecord;
 import com.edu.roy.wx.service.ResultService;
 import com.edu.roy.wx.service.SubjectService;
 
@@ -34,17 +35,26 @@ public class ResultController extends BaseController {
 	}
 	
 	@RequestMapping("/questions")
-	public ResponseEntity<HttpResult> qstr(Long resultId) {
-		if (null == resultId) {
+	public ResponseEntity<HttpResult> qstr(Long resultId, Long suiteId) {
+		if (null == resultId || null == suiteId) {
 			return bad(HttpResult.me(HttpResult.ERR));
 		}
-		return ok(HttpResult.me(HttpResult.OK, null, resultService.questionResult(resultId)));
+		return ok(HttpResult.me(HttpResult.OK, null, resultService.questionResult(resultId, suiteId)));
 	}
 	
 	@RequestMapping(value = "/question/check", method = RequestMethod.POST)
-	public ResponseEntity<HttpResult> check(Long questionId, Integer score, Integer val) {
-		
-		return null;
+	public ResponseEntity<HttpResult> check(DrillRecord drillRecord) {
+		resultService.checkedQuestion(drillRecord);
+		return ok(HttpResult.ok());
+	}
+	
+	@RequestMapping(value = "/over/exam", method = RequestMethod.POST)
+	public ResponseEntity<HttpResult> overExam(Long resultId) {
+		if (null == resultId) {
+			return bad(HttpResult.me(HttpResult.ERR, "invalid parameters."));
+		}
+		resultService.overExam(resultId);
+		return ok(HttpResult.ok());
 	}
 
 

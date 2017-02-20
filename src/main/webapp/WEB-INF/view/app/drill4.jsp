@@ -12,12 +12,12 @@
 <link rel="stylesheet" href="${root}/static/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" href="${root}/static/lib/jquery.mobile-1.4.5.min.css">
 <script src="${root}/static/lib/jquery.min.js"></script>
-<script src="${root}/static/lib/jquery.mobile-1.4.5.min.js"></script>
 <script src="${root}/static/lib/vue.min.js"></script>
 <script src="${root}/static/lay/mobile/layer.js"></script>
 <script src="${root}/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="${root}/static/lib/iscroll.js"></script>
 <style>
-body {background: #f2f7fa!important;    font-family: "Microsoft YaHei",'微软雅黑'!important;}
+body {background: #f2f7fa;    font-family: "Microsoft YaHei",'微软雅黑';}
 img {max-width: 100%;}
 .m10{margin:10px;}
 .m10t{margin-top:10px;}
@@ -83,18 +83,6 @@ line-height: 30px;
 font-weight: bold;
 font-size: 1.5rem;
 }
-.header {
-    position: fixed;
-    width: 100%;
-    height: 50px;
-    background: #fff;
-    top: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    background: #f0f0f0;
-}
 .footer{
     position: fixed;
     width: 100%;
@@ -112,7 +100,6 @@ display: inline-block;
 }
 .content {
 margin-bottom: 50px;
-margin-top: 52px;
 }
 .fbr{
     border-right: 1px solid #e0e0e0;
@@ -126,14 +113,7 @@ margin-top: 52px;
 	height: 100%;
 	border-radius: 100%;
 }
-.opt-check {
-	color: #fff!important;
-	background: #77c7e4!important;
-	display: inline-block;
-	border-radius: 100%;
-	width: 100%;
-	height: 100%;
-}
+
 .opt-multi {
 	color: #fff!important;
 	background: #77c7e4!important;
@@ -152,12 +132,37 @@ margin-top: 52px;
 .rd {
 background: #ccc;
 }
-.timing {
-flex: 1;
-display: inline-block;
+.header {
+    position: fixed;
+    width: 100%;
+    height: 50px;
+    background: #fff;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    background: #f0f0f0;
 }
-.footer-icon {
-display: block!important;
+.scroller {
+	position: absolute;
+	z-index: 1;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-text-size-adjust: none;
+	-moz-text-size-adjust: none;
+	-ms-text-size-adjust: none;
+	-o-text-size-adjust: none;
+	text-size-adjust: none;
 }
 </style>
 <script>root='${root}';</script>
@@ -165,87 +170,77 @@ display: block!important;
 <body>
 <input type="hidden" id="suite_id" value="${suite.id }" />
 <input type="hidden" id="subject_id" value="${suite.subjectId }" />
-<input type="hidden" id="suite_timing" value="${suite.timing }" />
 <div id="app" v-cloak>
-	<div class="container content">
+	<div class="container content" v-bind:style="{width: width+'px'}">
 		<h3>第{{questions[current].sort}}题 ({{questions[current].score}}分):</h3>
-		<div>
-			<div class="qstn-title">
-				<span class="qstn-type">{{questions[current].type | qstnType}}</span>
-				<span class="qstn-cnt">{{questions[current].title}}</span>
-			</div>
-			<div v-show="questions[current].adjunct!=''" class="center m10t">
-				<img v-if="questions[current].adjunctType==0" v-bind:src="'${root }/down?path='+questions[current].adjunct">
-				<audio v-if="questions[current].adjunctType==1" :src="'${root }/down?path='+questions[current].adjunct" controls="controls">
-					Your browser does not support the audio element.
-				</audio>
-				<video v-if="questions[current].adjunctType==2" :src="'${root }/down?path='+questions[current].adjunct" controls="controls">
-					Your browser does not support the video tag.
-				</video>
-			</div>
-		</div>
-		<div :class="{hide: questions[current].type==4}" v-for="(e, i) in options" class="opts" @click="solve(i)">
-			<span class="opts-chs" :class="{'opt-multi': !!multis[i]}" v-html="optFilter(i, e)"></span>
-			<div class="opts-cnt">{{e}}</div>
-		</div>
-		<div :class="{hide: questions[current].type!=4}" style="padding: 10px;margin: 10px;border: 1px solid #e0e0e0;">
-			<textarea v-bind:class="{rd: ro}" v-bind:readonly="ro" v-bind:readonly="ro" v-model="sa" rows="7" style="width:100%;resize: none;" placeholder="在这里回答"></textarea>
-			<button @click="sas" class="btn btn-info" style="width:100%;">提交</button>
-		</div>
-		<div :class="{hide: !finished}">
-			<h3>试题详解:</h3>
-			<span>{{questions[current].description}}</span>
-			<div v-show="questions[current].assAdjunct!=''" class="center m10t">
-				<img v-if="questions[current].assAdjunctType==0" v-bind:src="'${root }/down?path='+questions[current].assAdjunct">
-				<audio v-if="questions[current].assAdjunctType==1" :src="'${root }/down?path='+questions[current].assAdjunct" controls="controls">
-					Your browser does not support the audio element.
-				</audio>
-				<video v-if="questions[current].assAdjunctType==2" :src="'${root }/down?path='+questions[current].assAdjunct" controls="controls">
-					Your browser does not support the video tag.
-				</video>
+		<div id="wrapper" style="min-height:600px;" v-bind:style="{width: width+'px'}">
+			<div class="scroller" style="display:flex;">
+				<div v-for="item in questions" v-bind:style="{width: width+'px'}">
+					<div class="qstn-title">
+						<span class="qstn-type">{{item.type | qstnType}}</span>
+						<span class="qstn-cnt">{{item.title}}</span>
+					</div>
+					<div v-show="item.images!=''" class="center m10t">
+						<img v-bind:src="'${root }/down?path='+item.images">
+					</div>
+					<div :class="{hide: item.type==4}" v-for="(e, i) in parse(item.options)" class="opts" @click="solve(i)">
+						<span class="opts-chs" :class="{'opt-multi': !!multis[i]}" v-html="optFilter(i)"></span>
+						<div class="opts-cnt">{{e}}</div>
+					</div>
+					<div :class="{hide: item.type!=4}" style="padding: 10px;margin: 10px;border: 1px solid #e0e0e0;">
+						<textarea v-bind:class="{rd: ro}" v-bind:readonly="ro" v-bind:readonly="ro" v-model="sa" rows="7" style="width:100%;resize: none;" placeholder="在这里回答"></textarea>
+						<button @click="sas" class="btn btn-info" style="width:100%;">提交</button>
+					</div>
+					<div :class="{hide: hidea}">
+						<h3>试题详解:</h3>
+						<span>{{item.description}}</span>
+						<div v-show="item.assImages!=''" class="center m10t">
+							<img v-bind:src="'${root }/down?path='+item.assImages">
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 	<div class="header">
 		<span style="flex:1;"></span>
-		<span style="flex:3;font-size: 2rem;">模拟考试</span>
+		<span style="flex:2;font-size: 2rem;">模拟考试</span>
 		<span style="flex:1;text-decoration: none;" class="glyphicon glyphicon-home" @click="home"></span>
 	</div>
 	<div class="footer">
-		<span class="fbr" @click="prev">
-			<span class="footer-icon glyphicon glyphicon-arrow-left"></span>
-		上一题
-		</span>
-		<span class="fbr" @click="next">
-			<span class="footer-icon glyphicon glyphicon-arrow-right"></span>
-		下一题</span>
-		<span class="fbr">
-			<span class="footer-icon glyphicon glyphicon-tasks"></span>
-		{{current+1}}/{{questions.length}}</span>
-		<span @click="submit">
-			<span class="footer-icon" v-text="timer"></span>
-		提交
-		</span>
+		<span class="fbr" @click="prev">上一题</span>
+		<span class="fbr" @click="next">下一题</span>
+		<span class="fbr">{{current+1}}/{{questions.length}}</span>
+		<span style="color:#337ab7;" @click="solve(-1)" class="fbr">题解</span>
+		<span style="color:#337ab7;" @click="joinWrong()">加入错题</span>
 	</div>
 </div>
 </body>
 <script>
-	$(function() { 
-		$.event.special.swipe.horizontalDistanceThreshold = 100;
-		$('body').on("swipeleft",function(){
-			  if (vm.current < vm.questions.length - 1) {
-				  vm.current ++;
-			  }
+	$(function() {
+
+		document.addEventListener('touchmove', function (e) { e.preventDefault(); }, {
+			capture: false,
+			passive: false
 		});
-		$('body').on("swiperight",function(){
-			  if (vm.current > 0) {
-				  vm.current --;
-			  }
+		Vue.nextTick(function() {
+			new IScroll('#wrapper', {
+				scrollX: true,
+				scrollY: false,
+				momentum: false,
+				snap: true,
+				snapSpeed: 400,
+				keyBindings: true
+			});
 		});
+		window.onresize = function() {
+			vm.width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+		};
 		//var 
 		vm = new Vue({
 			el: '#app',
 			data: {
+				width: (window.innerWidth > 0) ? window.innerWidth : screen.width,
 				step: 1,
 				subjects: [],
 				subjectId: 0,
@@ -257,15 +252,12 @@ display: block!important;
 				submits: {},
 				answer: [],
 				clss: ['', 'opt-right', 'opt-wrong'],
-				clss1: ['', 'opt-check', 'opt-check'],
 				multis: {},
 				sa: '',
 				ro: false,
 				hidea: true,
-				timer: '',
-				timing: 7200,
-				showAnswer: false,
-				finished: false
+				finished: false,
+				joined: []
 			},
 			watch: {
 				current: function(val, old) {
@@ -279,48 +271,37 @@ display: block!important;
 						t = 1;
 					}
 					return ['单', '多', '判', '解'][t - 1];
+				},
+				optFilter: function(v) {
+					return '&radic;';//String.fromCharCode(65 + (v||0));
 				}
 			},
 			methods: {
-				optFilter: function(v, qstn) {
+				parse: function(v) {
+					if (!v) return [];
+					return JSON.parse(v);
+				},
+				optFilter: function(v) {
 					var a = String.fromCharCode(65 + (v||0)), cls = 0, ret = String.fromCharCode(65 + (v||0));
 					var ans = this.answer || [], r = this.answers[this.current];
-					if ((ans.length == 0 || !r || !r.d) && !this.finished) {
+					if (ans.length == 0 || !r || !r.d) {
 						return ret;
 					} else {
-						if (!this.finished) {
-							$.each(r.r, function(ir, ie) {
-								if (ie == a) {
-									cls = 1;
-									return false;
-								}
-							});
-							return '<span class="'+this.clss1[cls]+'">'+a+'</span>';
-						} else {
-							if (r) {
-								//r = {r: JSON.parse(this.questions[this.current].answers)};
-								$.each(r.r, function(ir, ie) {
-									if (ie == a) {
-										ret = '&times;';
-										cls = 2;
-										return false;
-									}
-								});
-							} 
-							if (this.finished) {
-								ans = JSON.parse(this.questions[this.current].answers);
+						$.each(r.r, function(ir, ie) {
+							if (ie == a) {
+								ret = '&times;';
+								cls = 2;
+								return false;
 							}
-							
-							$.each(ans, function(i, e) {
-								if (e == a) {
-									ret = '&radic;';
-									cls = 1;
-								}
-							});
-							return '<span class="'+this.clss[cls]+'">'+ret+'</span>';
-						}
+						});
+						$.each(ans, function(i, e) {
+							if (e == a) {
+								ret = '&radic;';
+								cls = 1;
+							}
+						});
 						//return this.answer[v]; //this.answer[v]; //'&radic;';//
-						//return '<span class="'+this.clss[cls]+'">'+ret+'</span>';
+						return '<span class="'+this.clss[cls]+'">'+ret+'</span>';
 					}
 				},
 				msg: function(msg) {
@@ -352,31 +333,39 @@ display: block!important;
 					this.releaseMulti();
 				},
 				solve: function(i) {
-					if (this.finished) return;
 					var that = this;
 					var qstn = this.questions[this.current];
 					var ans = JSON.parse(qstn.answers), r = false, s = String.fromCharCode(65 + i);
+					if (that.answers[that.current] && that.answers[that.current].d) {
+						return;
+					}
+					if (i == -1) {
+						this.answers[this.current] = {
+								a: '',
+								r: [this.sa],
+								s: 0,
+								d: 1,
+								t: qstn.type,
+								id: qstn.id
+						};
+						this.hidea = false;
+						this.ro = true;
+					}
+					
 					if (qstn.type == 1 || qstn.type == 3) {
 						$.each(ans, function(ii, e) {
 							if (s == e) {
 								r = true;
 							}
 						});
-						var _a = that.answers[that.current] || {};
-						var _ar = _a.r || [];
-						var iidx = _ar.indexOf(s);
-						if (iidx != -1) {
-							that.answers[that.current] = {};
-						} else {
-							that.answers[that.current] = {
-									a: ans,
-									r: [s],
-									s: r ? qstn.score : 0,
-									d: 1,
-									t: qstn.type,
-									id: qstn.id
-								};
-						}
+						that.answers[that.current] = {
+							a: ans,
+							r: [s],
+							s: r ? qstn.score : 0,
+							d: 1,
+							t: qstn.type,
+							id: qstn.id
+						};
 						that.answer = ans;
 						that.hidea = false;
 					}
@@ -385,28 +374,43 @@ display: block!important;
 						var _a = that.answers[that.current] || {};
 						_a.a = ans;
 						var _ar = _a.r || [];
-						var iidx = _ar.indexOf(s);
-						if (iidx == -1) {
-							_ar.push(s);
-						} else {
-							_ar.splice(iidx, 1);
+						if (_ar.indexOf(s) != -1) {
+							return;
 						}
+						_ar.push(s);
 						_a.r = _ar;
-						var _m = JSON.parse(JSON.stringify(that.multis||{}));
-						_m[i] = iidx == -1 ? true : false;
-						that.multis = _m;
+						if (_ar.length == ans.length) {
+							_ar = _ar.sort();
+							$.each(ans.sort(), function(ii, e) {
+								if (String.fromCharCode(65 + _ar[ii]) != e) {
+									return (r = false);
+								}
+							});
+							_a.s = r ? qstn.score : 0;
+							_a.d = 1;
+							that.hidea = false;
+							that.answer = ans;
+						} else {
+							var _m = JSON.parse(JSON.stringify(that.multis||{}));
+							_m[i] = true;
+							that.multis = _m;
+						}
 						_a.t = qstn.type;
 						_a.id = qstn.id;
-						_a.d = 1;
+						if (i == -1) {
+							_a.d = 1;
+							that.answer = ans;
+						}
 						that.answers[that.current] = _a;
 					}
+					
+					
+					
 				},
 				submit: function() {
-					if (this.finished) {
-						return;
-					}
-					var __I = layer.open({type: 2});
+					if (this.finished) return;
 					this.finished = true;
+					var __I = layer.open({type: 2});
 					var 
 						that = this, 
 						msg = '总题数:' + this.questions.length, 
@@ -425,15 +429,13 @@ display: block!important;
 							data.push({
 								questionId: m.id,
 								answers: JSON.stringify(_ans.r),
-								status: 1,
-								score: _ans.s || 0
+								result: m.type < 4 ? _ans.s > 0 ? 2 : 3 : 1 
 							});
 						} else {
 							data.push({
-								questionId: m.id,
+								id: m.id,
 								answers: '',
-								score: 0,
-								status: m.type < 4 ? 1 : 0
+								result: 3
 							});
 						}
 					});
@@ -449,7 +451,7 @@ display: block!important;
 						url: root + '/wx/drill/submit',
 						method: 'POST',
 						data: {
-							type: -1,
+							type: -2,
 							suiteId: $('#suite_id').val(),
 							subjectId: $('#subject_id').val(),
 							score: s,
@@ -457,9 +459,6 @@ display: block!important;
 						},
 						success: function(r) {
 							layer.close(__I);
-						}, 
-						error: function(r) {
-							
 						}
 					});
 				},
@@ -473,7 +472,6 @@ display: block!important;
 					}
 				},
 				sas: function() {
-					if (this.finished) return;
 					var that = this,
 					    qstn = this.questions[this.current];
 					if (this.answers[this.current] && this.answers[this.current].d) {
@@ -500,22 +498,29 @@ display: block!important;
 						this.sa = '';
 					}
 				},
-				time: function() {
-					this.timing --;
-					this.timer = this.leftPad(~~(this.timing / 60), 2, 0) + ':' + this.leftPad(this.timing % 60, 2, 0);
-					if (this.timing > 0 && !this.finished) {
-						setTimeout(this.time, 1000);
-					} else {
-						this.finished = true;
+				joinWrong: function() {
+					if (this.joined[this.current] == 1) {
+						this.msg('已加入错题');
+						return;
 					}
-				},
-				leftPad: function(v, l, r) {
-					v = null == v ? '' : (v + '');
-					r = null == r ? ' ' : (r + '');
-					while(v.length < l) {
-						v = r + v;
-					}
-					return v;
+					var qstn = this.questions[this.current], that = this;
+					$.ajax({
+						url: root + '/wx/wronged/insert',
+						method: 'POST',
+						data: {
+							subjectId: qstn.subjectId,
+							suiteId: qstn.suiteId,
+							questionId: qstn.id,
+							answers: '',
+							cnd: 0
+						},
+						success: function(r) {
+							if (r.code == 200) {
+								that.msg('加入成功');
+								that.joined[that.current] = 1;
+							}
+						}
+					});
 				},
 				home: function() {
 					window.location.href = root + '/wx/home';
@@ -524,8 +529,6 @@ display: block!important;
 			mounted: function() {
 				var that = this;
 				this.$nextTick(function() {
-					that.timing = $('#suite_timing').val()*1;
-					that.time();
 					that.loadQuestions();
 				});
 			}

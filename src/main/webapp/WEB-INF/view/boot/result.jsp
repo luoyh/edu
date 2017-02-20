@@ -94,7 +94,8 @@ max-width: 100%;
         			<td>{{e.type == -1 ? "模拟考试" : "练习模式"}}</td>
         			<td>{{e.score}}</td>
         			<td>
-        				<button class="btn btn-info" @click="see(e.id)">查看</button>
+        				<button class="btn btn-primary" @click="see(e.id, e.suiteId, e.memberId, 0)">查看</button>
+        				<button v-if="e.status == 0" class="btn btn-info" @click="see(e.id, e.suiteId, e.memberId, 1)">阅卷</button>
         			</td>
         		</tr>
 	        </tbody>
@@ -118,9 +119,9 @@ max-width: 100%;
         <h4 class="modal-title">管理</h4>
       </div>
       <div class="modal-body">
-      	<div v-for="e in detail">
+      	<div v-for="(e,idx) in detail" :style="{'background-color': idx%2==0?'#f0f0f0':'#fff'}" style="border: 1px solid #ccc;margin: 10px auto;">
       		<h3>{{e.sort}}:{{e.title}}</h3>
-      		<p v-show="e.adjunct != ''">
+      		<p v-if="e.adjunct && e.adjunct != ''">
       			<img v-if="e.adjunctType == 0" :src="'${root }/down?path='+e.adjunct" />
       			<audio v-if="e.adjunctType == 1" :src="'${root }/down?path='+e.adjunct" controls="controls">
       				Your browser can not supports tag audio.
@@ -130,15 +131,15 @@ max-width: 100%;
       			</video>
       		</p>
       		<div v-html="result(e)"></div>
-      		<div v-if="e.type==4">
-      			得分：<input type="text" />
-      			<button>确定</button>
+      		<div v-if="e.status==0 && see==1">
+      			得分：<input type="text" class="ck-score-input" :id="'ck_score_'+idx" />
+      			<button @click="checked(idx,e)">确定</button>
       		</div>
       		<h4>参考答案：</h4>
       		<p>{{JSON.parse(e.answers).join()}}</p>
    			<h5>分析:</h5>
    			<p>{{e.description}}</p>
-   			<p v-show="e.assAdjunct != ''">
+   			<p v-if="e.assAdjunct && e.assAdjunct != ''">
    				<img v-if="e.assAdjunctType == 0" :src="'${root }/down?path='+e.assAdjunct" />
       			<audio v-if="e.assAdjunctType == 1" :src="'${root }/down?path='+e.assAdjunct" controls="controls">
       				Your browser can not supports tag audio.
@@ -150,6 +151,7 @@ max-width: 100%;
       	</div>
       </div>
       <div class="modal-footer">
+        <button v-if="see==1" type="button" @click="over" class="btn btn-primary" >阅卷</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div><!-- /.modal-content -->
@@ -195,11 +197,15 @@ max-width: 100%;
 					}
 				});
 			},
-			see: function(id) {
+			see: function(id, suiteId, memberId, st) {
 				var that = this;
+				vm1.memberId = memberId;
+				vm1.resultId = id;
+				vm1.see = st;
+				$('.ck-score-input').val('');
 				$.ajax({
 					url: root + '/admin/result/questions',
-					data: {resultId: id},
+					data: {resultId: id, suiteId: suiteId},
 					success: function(r) {
 						vm1.detail = r.data;
 						$('#detail_modal').modal('show');
@@ -217,7 +223,10 @@ max-width: 100%;
 	vm1 = new Vue({
 		el: '#detail_modal',
 		data: {
-			detail: []
+			detail: [],
+			memberId: 0,
+			resultId: 0,
+			see: 0
 		},
 		methods: {
 			result: function(item) {
@@ -229,7 +238,7 @@ max-width: 100%;
 						htm += '<div class="opts"><span class="opts-slt">'+String.fromCharCode(i + 65)+'</span>'+
 						'<span class="opts-cnt">'+e+'</span>';
 						var ck = false;
-						$.each(JSON.parse(item.resultAnswers), function(ii, ee) {
+						$.each(JSON.parse(item.resultAnswers||'[]'), function(ii, ee) {
 							if (ee == String.fromCharCode(i + 65)) {
 								htm += '<span class="glyphicon glyphicon-ok"></span>';
 								return false;
@@ -242,6 +251,44 @@ max-width: 100%;
 					return '<i>'+JSON.parse(item.resultAnswers||'[]').join()+'</i>';
 				}
 				
+			},
+			checked: function(idx, e) {
+				var that = this, s = $('#ck_score_'+idx).val();
+				if (!/^\d+$/.test(s) || s > e.score) {
+					layer.msg('分数输入错误, 且最多' + e.score + '分');
+					return;
+				}
+				var data = {
+						memberId: this.memberId,
+						resultId: this.resultId,
+						type: 1,
+						subjectId: e.subjectId,
+						suiteId: e.suiteId,
+						questionId: e.id,
+						answers: e.resultAnswers,
+						score: $('#ck_score_'+idx).val()*1,
+						status: 1
+				};
+				$.ajax({
+					url: root + '/admin/result/question/check',
+					method: 'POST',
+					data: data,
+					success: function() {
+						that.detail[idx].status = 1;
+						vm.search();
+					}
+				});
+			},
+			over: function() {
+				$.ajax({
+					url: root + '/admin/result/over/exam',
+					method: 'POST',
+					data: {resultId: this.resultId},
+					success: function() {
+						vm.search();
+						$('#detail_modal').modal('hide');
+					}
+				});
 			}
 		}
 	});

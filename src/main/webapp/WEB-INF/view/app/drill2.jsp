@@ -100,6 +100,7 @@ display: inline-block;
 }
 .content {
 margin-bottom: 50px;
+margin-top: 52px;
 }
 .fbr{
     border-right: 1px solid #e0e0e0;
@@ -144,26 +145,6 @@ background: #ccc;
     text-align: center;
     background: #f0f0f0;
 }
-.scroller {
-	position: absolute;
-	z-index: 1;
-	-webkit-tap-highlight-color: rgba(0,0,0,0);
-	-webkit-transform: translateZ(0);
-	-moz-transform: translateZ(0);
-	-ms-transform: translateZ(0);
-	-o-transform: translateZ(0);
-	transform: translateZ(0);
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	-webkit-text-size-adjust: none;
-	-moz-text-size-adjust: none;
-	-ms-text-size-adjust: none;
-	-o-text-size-adjust: none;
-	text-size-adjust: none;
-}
 </style>
 <script>root='${root}';</script>
 </head>
@@ -171,17 +152,23 @@ background: #ccc;
 <input type="hidden" id="suite_id" value="${suite.id }" />
 <input type="hidden" id="subject_id" value="${suite.subjectId }" />
 <div id="app" v-cloak>
-	<div class="container content" v-bind:style="{width: width+'px'}">
-		<h3>第{{questions[current].sort}}题 ({{questions[current].score}}分):</h3>
-		<div id="wrapper" style="" v-bind:style="{width: width+'px'}">
-			<div class="scroller" style="display:flex;">
-				<div v-for="item in questions" v-bind:style="{width: width+'px'}">
+	<div class="content" v-bind:style="{width: width+'px'}">
+		<div id="wrapper" style="min-height:600px;" v-bind:style="{width: width+'px'}">
+			<div class="scroller" style="display:flex;position: absolute;overflow:hidden;">
+				<div v-for="item in questions" style="padding: 0 15px;word-break: break-all;margin-bottom:50px;overflow:hidden;" v-bind:style="{width: width+'px'}">
+					<h3>第{{item.sort}}题 ({{item.score}}分):</h3>
 					<div class="qstn-title">
 						<span class="qstn-type">{{item.type | qstnType}}</span>
 						<span class="qstn-cnt">{{item.title}}</span>
 					</div>
-					<div v-show="item.images!=''" class="center m10t">
-						<img v-bind:src="'${root }/down?path='+item.images">
+					<div v-show="item.adjunct!=''" class="center m10t">
+						<img v-if="item.adjunctType==0" v-bind:src="'${root }/down?path='+item.adjunct">
+						<audio v-if="item.adjunctType==1" :src="'${root }/down?path='+item.adjunct" controls="controls">
+							Your browser does not support the audio element.
+						</audio>
+						<video v-if="item.adjunctType==2" :src="'${root }/down?path='+item.adjunct" controls="controls">
+							Your browser does not support the video tag.
+						</video>
 					</div>
 					<div :class="{hide: item.type==4}" v-for="(e, i) in parse(item.options)" class="opts" @click="solve(i)">
 						<span class="opts-chs" :class="{'opt-multi': !!multis[i]}" v-html="optFilter(i)"></span>
@@ -194,8 +181,14 @@ background: #ccc;
 					<div :class="{hide: hidea}">
 						<h3>试题详解:</h3>
 						<span>{{item.description}}</span>
-						<div v-show="item.assImages!=''" class="center m10t">
-							<img v-bind:src="'${root }/down?path='+item.assImages">
+						<div v-show="item.assAdjunct!=''" class="center m10t">
+							<img v-if="item.assAdjunctType==0" v-bind:src="'${root }/down?path='+item.assAdjunct">
+							<audio v-if="item.assAdjunctType==1" :src="'${root }/down?path='+item.assAdjunct" controls="controls">
+								Your browser does not support the audio element.
+							</audio>
+							<video v-if="item.assAdjunctType==2" :src="'${root }/down?path='+item.assAdjunct" controls="controls">
+								Your browser does not support the video tag.
+							</video>
 						</div>
 					</div>
 				</div>
@@ -204,7 +197,7 @@ background: #ccc;
 	</div>
 	<div class="header">
 		<span style="flex:1;"></span>
-		<span style="flex:2;font-size: 2rem;">模拟考试</span>
+		<span style="flex:2;font-size: 2rem;">练习</span>
 		<span style="flex:1;text-decoration: none;" class="glyphicon glyphicon-home" @click="home"></span>
 	</div>
 	<div class="footer">
@@ -217,25 +210,7 @@ background: #ccc;
 </div>
 </body>
 <script>
-	$(function() {
-
-		document.addEventListener('touchmove', function (e) { e.preventDefault(); }, {
-			capture: false,
-			passive: false
-		});
-		Vue.nextTick(function() {
-			new IScroll('#wrapper', {
-				scrollX: true,
-				scrollY: false,
-				momentum: false,
-				snap: true,
-				snapSpeed: 400,
-				keyBindings: true
-			});
-		});
-		window.onresize = function() {
-			vm.width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-		};
+	$(function() { 
 		//var 
 		vm = new Vue({
 			el: '#app',
@@ -316,6 +291,16 @@ background: #ccc;
 					$.get(root + '/admin/question/of/suite', {suiteId: $('#suite_id').val()}, function(r) {
 						that.questions = r.data;
 						that.options = JSON.parse(that.questions[0].options);
+						that.$nextTick(function() {
+							new IScroll('#wrapper', {
+								scrollX: true,
+								scrollY: false,
+								momentum: false,
+								snap: true,
+								snapSpeed: 400,
+								keyBindings: true
+							});
+						});
 					});
 				},
 				prev: function() {

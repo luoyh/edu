@@ -45,13 +45,13 @@ public interface ResultMapper {
 
 	List<ResultVO> page(Page<ResultVO> param);
 	
-	@Select("select a.*,b.answers resultAnswers from question a left join drill_record b on a.id=b.question_id and b.result_id=#{resultId} order by a.sort asc;")
-	List<QuestionResultVO> questionResult(long resultId);
+	@Select("select ifnull(b.status,0) status,a.*,b.answers resultAnswers from question a left join drill_record b on a.id=b.question_id and b.result_id=#{resultId} where a.suite_id=#{suiteId} order by a.sort asc;")
+	List<QuestionResultVO> questionResult(@Param("resultId") long resultId, @Param("suiteId") long suiteId);
 	
 	@Insert("insert into wrong_result(member_id, subject_id, suite_id, question_id, answers, cnd, gmt_created, gmt_modified) values(#{memberId}, #{subjectId}, #{suiteId}, #{questionId}, #{answers}, #{cnd}, now(), now()) on duplicate key update cnd=0")
 	void joinWrong(WrongResult wrongResult);
 	
-	@Insert("insert into drill_record(member_id,result_id,`type`,result,subject_id,suite_id,question_id,answers,score,gmt_created,gmt_modified) values(#{memberId},#{resultId},#{type},#{result},#{subjectId},#{suiteId},#{questionId},#{answers},#{score}) on duplicate key update score=#{score}")
+	@Insert("insert into drill_record(member_id,result_id,`type`,status,subject_id,suite_id,question_id,answers,score,gmt_created,gmt_modified) values(#{memberId},#{resultId},#{type},#{status},#{subjectId},#{suiteId},#{questionId},#{answers},#{score},now(),now()) on duplicate key update `status`=1,score=#{score},gmt_modified=now()")
 	void checkedQuestion(DrillRecord drillRecord);
 	
 	@Update("update drill_result set score = (select sum(score) from drill_record where result_id=#{resultId}) where id=#{resultId}")
