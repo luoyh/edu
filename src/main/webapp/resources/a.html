@@ -2,164 +2,69 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
 
 <title>iScroll demo: carousel</title>
 
-<script type="text/javascript" src="lib/iscroll.js"></script>
+<script type="text/javascript" src="lib/jquery.touchSwipe.min.js"></script>
 <script type="text/javascript">
-var myScroll;
-function loaded () {
-	myScroll = new IScroll('#wrapper', {
-		scrollX: true,
-		scrollY: false,
-		momentum: false,
-		snap: true,
-		snapSpeed: 400,
-		keyBindings: true,
-		indicators: {
-			el: document.getElementById('indicator'),
-			resize: false
-		}
-	});
-}
-document.addEventListener('touchmove', function (e) { e.preventDefault(); }, isPassive() ? {
-	capture: false,
-	passive: false
-} : false);
 </script>
 
 <style type="text/css">
-* {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-}
-html {
-	-ms-touch-action: none;
-}
-body, ul, li {
-	padding: 0;
-	margin: 0;
-	border: 0;
-}
-body {
-	font-size: 12px;
-	font-family: ubuntu, helvetica, arial;
-	overflow: hidden; /* this is important to prevent the whole page to bounce */
-}
-#viewport {
-	position: relative;
-	width: 200px;
-	height: 240px;
-	margin: 0 auto;
-	background: #444;
-	overflow: hidden;
-}
-#wrapper {
-	width: 200px;
-	height: 240px;
-	margin: 0 auto;
-}
 #scroller {
 	display: flex;
-	position: absolute;
-	z-index: 1;
-	-webkit-tap-highlight-color: rgba(0,0,0,0);
-	height: 240px;
-	-webkit-transform: translateZ(0);
-	-moz-transform: translateZ(0);
-	-ms-transform: translateZ(0);
-	-o-transform: translateZ(0);
-	transform: translateZ(0);
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	-webkit-text-size-adjust: none;
-	-moz-text-size-adjust: none;
-	-ms-text-size-adjust: none;
-	-o-text-size-adjust: none;
-	text-size-adjust: none;
-	background-color: #444;
-}
-.slide {
-	width: 200px;
-	height: 240px;
-	float: left;
-}
-.painting {
-	width: 140px;
-	height: 200px;
-	border-radius: 10px;
-	margin: 20px auto;
-	border: 1px solid #000;
-	box-shadow:
-		inset 2px 2px 6px rgba(255,255,255,0.6),
-		inset -2px -2px 6px rgba(0,0,0,0.6),
-		0 1px 8px rgba(0,0,0,0.8);
-}
-.giotto {
-	background: url(giotto.jpg);
-}
-.leonardo {
-	background: url(leonardo.jpg);
-}
-.gaugin {
-	background: url(gaugin.jpg);
-}
-.warhol {
-	background: url(warhol.jpg);
-}
-#indicator {
 	position: relative;
-	width: 110px;
-	height: 20px;
-	margin: 10px auto;
-	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAUBAMAAABohZD3AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QUGCDYztyDUJgAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAGFBMVEUAAADNzc3Nzc3Nzc3Nzc3Nzc3Nzc3///8aWwwLAAAABnRSTlMAX5Ks3/nRD0HIAAAAAWJLR0QHFmGI6wAAAFtJREFUGFdjYGBgEHYNMWRAAJE0IHCEc5nSwEABxleD8JOgXMY0KBCA8FlgfAcIXwzGT4TwzWD8ZAjfDcZPgfDDYPxU7Hx09ejmoduH7h5096L7B8O/6OGBGl4APYg8TQ0XAScAAAAASUVORK5CYII=);
 }
-#dotty {
+
+#viewport {
 	position: absolute;
-	width: 20px;
-	height: 20px;
-	border-radius: 10px;
-	background: #777;
+	left: 0;
+	bottom:0;
+	top: 0;
+	right: 0;
+}
+
+.slide {
+	flex-shrink: 0;
+	width: 421px;
+}
+
+#wrapper {
+	position: absolute;
+}
+.viewport {
+   width : 500% ;
+   height : 100% ;
+   display : -webkit-box ;
+   overflow : hidden ;
+   pointer-events : none ;
+   - webkit-transform : translate3d( 0 , 0 , 0 ) ;
+   backface-visibility : hidden ;
+   position : relative ;
+}
+.pageview {
+width: 20%;
 }
 </style>
 </head>
-<body onload="loaded()">
-
-<div id="viewport">
-	<div id="wrapper">
-		<div id="scroller">
-			<div class="slide">
-				<div class="painting giotto" style="color:#fff;text-align:center;">
-					<h2>A</h2>
-				</div>
-			</div>
-			<div class="slide">
-				<div class="painting leonardo" style="color:#fff;text-align:center;">
-					<h2>B</h2>
-				</div>
-			</div>
-			<div class="slide">
-				<div class="painting gaugin" style="color:#fff;text-align:center;">
-					<h2>C</h2>
-				</div>
-			</div>
-			<div class="slide">
-				<div class="painting warhol" style="color:#fff;text-align:center;">
-					<h2>D</h2>
-				</div>
-			</div>
-		</div>
-	</div>
+<body>
+<div id="viewport" class="viewport">
+     <div class="pageview" style ="background: #3b76c0">
+         <h3>页面 - 1 </h3>
+     </div>
+     <div class="pageview" style = "background: #58c03b;">
+         <h3>页面 - 2 </h3>
+     </div>
+     <div class ="pageview" style = "background: #c03b25;">
+         <h3>页面 - 3 </h3>
+     </div>
+     <div class = "pageview" style = "background: #e0a718;">
+         <h3>页面 - 4 </h3>
+     </div>
+     <div class = "pageview" style = "background: #c03eac;">
+         <h3>页面 - 5 </h3>
+     </div>
 </div>
-
-<div id="indicator">
-	<div id="dotty"></div>
-</div>
-
 </body>
 </html>
