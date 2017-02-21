@@ -7,8 +7,41 @@
 
 <title>iScroll demo: carousel</title>
 
+<script type="text/javascript" src="lib/jquery.min.js"></script>
 <script type="text/javascript" src="lib/jquery.touchSwipe.min.js"></script>
 <script type="text/javascript">
+$(function() {
+    var width = 326, index = 0;
+    $("#viewport").swipe( { swipeStatus:swipe2, allowPageScroll:"vertical"} );
+
+    function swipe2(event, phase, direction, distance) {
+      if (direction == 'left') {
+        if (index >= 4 && distance > width / 3) {
+          distance = width / 3;
+        }
+        if (phase == 'end') {
+          if (index < 4) index ++;
+          distance = index * width;
+        } else {
+          distance = ((index * width ) + distance);
+        }
+        $(this).css('margin-left', '-' + distance + 'px');
+      } else if (direction == 'right') {
+        if (index == 0 && distance > width / 3) {
+          distance = width / 3;
+        }
+        if (phase == 'end') {
+          if (index > 0) index --;
+          distance = - index * width;
+        } else {
+          distance = distance - (index * width );
+        }
+        //$(this).animate({'marginLeft': distance + 'px'}, 10);
+        $(this).css('margin-left', distance + 'px');
+        //$("#box").animate({height:"300px"});
+      }
+    }
+});
 </script>
 
 <style type="text/css">
@@ -34,17 +67,14 @@
 	position: absolute;
 }
 .viewport {
-   width : 500% ;
    height : 100% ;
-   display : -webkit-box ;
+   display : flex;
    overflow : hidden ;
-   pointer-events : none ;
-   - webkit-transform : translate3d( 0 , 0 , 0 ) ;
-   backface-visibility : hidden ;
    position : relative ;
 }
 .pageview {
-width: 20%;
+    width: 326px;
+    flex-shrink: 0;
 }
 </style>
 </head>
