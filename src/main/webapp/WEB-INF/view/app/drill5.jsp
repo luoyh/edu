@@ -18,10 +18,8 @@
 <script src="${root}/static/bootstrap/js/bootstrap.min.js"></script>
 <script src="${root}/static/lib/swipe.js"></script>
 <style>
-body {background: #f2f7fa!important;    font-family: "Microsoft YaHei",'微软雅黑'!important;}
+body {background: #f2f7fa;    font-family: "Microsoft YaHei",'微软雅黑';}
 img {max-width: 100%;}
-video {max-width: 100%;}
-audio {max-width: 100%;}
 .m10{margin:10px;}
 .m10t{margin-top:10px;}
 .m10r{margin-right:10px;}
@@ -66,7 +64,6 @@ display: flex;
 flex: 1;
 display: inline-block;
 padding: 0 10px;
-word-break: break-all;
 }
 .opts-chs {
 	width: 30px;
@@ -86,19 +83,6 @@ min-height: 30px;
 line-height: 30px;
 font-weight: bold;
 font-size: 1.5rem;
-word-break: break-all;
-}
-.header {
-    position: fixed;
-    width: 100%;
-    height: 50px;
-    background: #fff;
-    top: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    background: #f0f0f0;
 }
 .footer{
     position: fixed;
@@ -116,8 +100,11 @@ flex: 1;
 display: inline-block;
 }
 .content {
-margin-bottom: 50px;
-margin-top: 52px;
+    position: absolute;
+    left: 0;
+    top: 50px;
+    bottom: 50px;
+    right: 0;
 }
 .fbr{
     border-right: 1px solid #e0e0e0;
@@ -131,21 +118,12 @@ margin-top: 52px;
 	height: 100%;
 	border-radius: 100%;
 }
-.opt-check {
-	color: #fff!important;
-	background: #77c7e4!important;
-	display: inline-block;
-	border-radius: 100%;
-	width: 100%;
-	height: 100%;
-}
+
 .opt-multi {
 	color: #fff!important;
 	background: #77c7e4!important;
 	display: inline-block;
 	border-radius: 100%;
-	width: 100%;
-	height: 100%;
 }
 
 .opt-wrong {
@@ -157,15 +135,21 @@ margin-top: 52px;
 	border-radius: 100%;
 }
 .rd {
-background: #ccc!important;
+background: #ccc;
 }
-.timing {
-flex: 1;
-display: inline-block;
+.header {
+    position: fixed;
+    width: 100%;
+    height: 50px;
+    background: #fff;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    background: #f0f0f0;
 }
-.footer-icon {
-display: block!important;
-}
+
 /* Swipe 2 required styles */
 
 .swipe {
@@ -183,14 +167,13 @@ display: block!important;
   width:100%;
   position: relative;
 }
-/* End Swipe 2 required styles */
+
 </style>
 <script>root='${root}';</script>
 </head>
 <body>
 <input type="hidden" id="suite_id" value="${suite.id }" />
 <input type="hidden" id="subject_id" value="${suite.subjectId }" />
-<input type="hidden" id="suite_timing" value="${suite.timing }" />
 <div id="app" v-cloak>
 	<div class="container content">
 		<div id="wrapper" class="swipe">
@@ -210,21 +193,17 @@ display: block!important;
 							Your browser does not support the video tag.
 						</video>
 					</div>
-					<div class="out-opts" :id="'opts'+idx">
-						<div :class="{hide: item.type==4}" v-for="(e, i) in parse(item.options)" class="opts" @click="solve(i, idx, $event)">
-							<span class="opts-chs"> 
-								<span>{{String.fromCharCode(i + 65)}}</span>
-							</span>
-							<div class="opts-cnt">{{e}}</div>
-						</div>
+					<div :class="{hide: item.type==4}" v-for="(e, i) in options" class="opts" @click="solve(i)">
+						<span class="opts-chs" :class="{'opt-multi': !!multis[i]}" v-html="optFilter(i)"></span>
+						<div class="opts-cnt">{{e}}</div>
 					</div>
 					<div :class="{hide: item.type!=4}" style="padding: 10px;margin: 10px;border: 1px solid #e0e0e0;">
-						<textarea :id="'solve_result'+idx" rows="7" style="width:100%;resize: none;" placeholder="在这里回答"></textarea>
-						<button @click="sas(idx)" class="btn btn-info" style="width:100%;">提交</button>
+						<textarea v-bind:class="{rd: ro}" v-bind:readonly="ro" v-bind:readonly="ro" v-model="sa" rows="7" style="width:100%;resize: none;" placeholder="在这里回答"></textarea>
+						<button @click="sas" class="btn btn-info" style="width:100%;">提交</button>
 					</div>
-					<div style="display:none;" :id="'drilled'+idx">
+					<div :class="{hide: hidea}">
 						<h3>试题详解:</h3>
-						<span style="word-break: break-all;">{{item.description}}</span>
+						<span>{{item.description}}</span>
 						<div v-show="item.assAdjunct!=''" class="center m10t">
 							<img v-if="item.assAdjunctType==0" v-bind:src="'${root }/down?path='+item.assAdjunct">
 							<audio v-if="item.assAdjunctType==1" :src="'${root }/down?path='+item.assAdjunct" controls="controls">
@@ -241,24 +220,15 @@ display: block!important;
 	</div>
 	<div class="header">
 		<span style="flex:1;"></span>
-		<span style="flex:3;font-size: 2rem;">模拟考试</span>
+		<span style="flex:2;font-size: 2rem;">练习</span>
 		<span style="flex:1;text-decoration: none;" class="glyphicon glyphicon-home" @click="home"></span>
 	</div>
 	<div class="footer">
-		<span class="fbr" @click="prev">
-			<span class="footer-icon glyphicon glyphicon-arrow-left"></span>
-		上一题
-		</span>
-		<span class="fbr" @click="next">
-			<span class="footer-icon glyphicon glyphicon-arrow-right"></span>
-		下一题</span>
-		<span class="fbr">
-			<span class="footer-icon glyphicon glyphicon-tasks"></span>
-		{{curr+1}}/{{questions.length}}</span>
-		<span @click="submit">
-			<span class="footer-icon" v-text="timer"></span>
-		提交
-		</span>
+		<span class="fbr" @click="prev">上一题</span>
+		<span class="fbr" @click="next">下一题</span>
+		<span class="fbr">{{current+1}}/{{questions.length}}</span>
+		<span style="color:#337ab7;" @click="solve(-1)" class="fbr">题解</span>
+		<span style="color:#337ab7;" @click="joinWrong()">加入错题</span>
 	</div>
 </div>
 </body>
@@ -270,14 +240,30 @@ display: block!important;
 			data: {
 				width: (window.innerWidth > 0) ? window.innerWidth : screen.width,
 				height: ((window.innerHeight > 0) ? window.innerHeight : screen.height) - 100,
+				step: 1,
+				subjects: [],
+				subjectId: 0,
+				suites: [],
 				questions: [{}],
+				current: 0,
+				options: [],
 				answers: {},
-				timer: '',
-				timing: 7200,
+				submits: {},
+				answer: [],
+				clss: ['', 'opt-right', 'opt-wrong'],
+				multis: {},
+				sa: '',
+				ro: false,
+				hidea: true,
 				finished: false,
+				joined: [],
 				curr: 0
 			},
 			watch: {
+				current: function(val, old) {
+					this.answer = (this.answers[val]||{}).a || [];
+					this.options = JSON.parse(this.questions[val].options);
+				}
 			},
 			filters: {
 				qstnType: function(t) {
@@ -285,19 +271,39 @@ display: block!important;
 						t = 1;
 					}
 					return ['单', '多', '判', '解'][t - 1];
+				},
+				optFilter: function(v) {
+					return '&radic;';//String.fromCharCode(65 + (v||0));
 				}
 			},
 			methods: {
-				calcOptCls: function(item, i) {
-					console.log(item, i); 
-					return 'opt-right';					
-				},
-				parse: function(o) {
-					return null == o ? [] : JSON.parse(o);//JSON.parse(o);
-				},
 				calcHeight: function(idx) {
+					console.log(idx);
 					return idx == this.curr ? 'auto' : (this.height +'px');
 					//return 'auto';
+				},
+				optFilter: function(v) {
+					var a = String.fromCharCode(65 + (v||0)), cls = 0, ret = String.fromCharCode(65 + (v||0));
+					var ans = this.answer || [], r = this.answers[this.current];
+					if (ans.length == 0 || !r || !r.d) {
+						return ret;
+					} else {
+						$.each(r.r, function(ir, ie) {
+							if (ie == a) {
+								ret = '&times;';
+								cls = 2;
+								return false;
+							}
+						});
+						$.each(ans, function(i, e) {
+							if (e == a) {
+								ret = '&radic;';
+								cls = 1;
+							}
+						});
+						//return this.answer[v]; //this.answer[v]; //'&radic;';//
+						return '<span class="'+this.clss[cls]+'">'+ret+'</span>';
+					}
 				},
 				msg: function(msg) {
 					 layer.open({
@@ -310,6 +316,7 @@ display: block!important;
 					var that = this;
 					$.get(root + '/admin/question/of/suite', {suiteId: $('#suite_id').val()}, function(r) {
 						that.questions = r.data;
+						that.options = JSON.parse(that.questions[0].options);
 						that.$nextTick(function() {
 							window.mySwipe = Swipe($('#wrapper')[0], {
 								continuous: false,
@@ -326,78 +333,98 @@ display: block!important;
 					});
 				},
 				prev: function() {
-					mySwipe.prev();
+					if (this.current <= 0) {
+						return;
+					}
+					this.current --;
+					this.releaseMulti();
 				},
 				next: function() {
-					mySwipe.next();
-				},
-				solve: function(i, idx, event) {
-					var 
-						that = this,
-						dom = $(event.target).closest('.out-opts'),
-						qstn = this.questions[this.curr],
-					 	anwers = JSON.parse(qstn.answers), 
-					 	result = false, 
-					 	selectOpts = String.fromCharCode(65 + i);
-					if (this.finished) {
+					if (this.current >= this.questions.length - 1) {
 						return;
 					}
-					// single choose
+					this.current ++;
+					this.releaseMulti();
+				},
+				solve: function(i) {
+					var that = this;
+					var qstn = this.questions[this.current];
+					var ans = JSON.parse(qstn.answers), r = false, s = String.fromCharCode(65 + i);
+					if (that.answers[that.current] && that.answers[that.current].d) {
+						return;
+					}
+					if (i == -1) {
+						this.answers[this.current] = {
+								a: '',
+								r: [this.sa],
+								s: 0,
+								d: 1,
+								t: qstn.type,
+								id: qstn.id
+						};
+						this.hidea = false;
+						this.ro = true;
+					}
+					
 					if (qstn.type == 1 || qstn.type == 3) {
-						$.each(anwers, function(_i, _e) {
-							if (selectOpts == _e) {
-								return !(result = true);
+						$.each(ans, function(ii, e) {
+							if (s == e) {
+								r = true;
 							}
 						});
-						that.answers[that.curr] = {
-							result: [selectOpts],
-							score: result ? qstn.score : 0,
+						that.answers[that.current] = {
+							a: ans,
+							r: [s],
+							s: r ? qstn.score : 0,
 							d: 1,
-							type: qstn.type,
+							t: qstn.type,
 							id: qstn.id
 						};
-						var allOpts = dom.find('.opts');
-						allOpts.each(function(_ii, _ee) {
-							var d = $(this).find('.opts-chs span');
-							d.removeClass('opt-multi');
-						});
-						allOpts.eq(i).find('.opts-chs span').addClass('opt-multi');
+						that.answer = ans;
+						that.hidea = false;
 					}
 					if (qstn.type == 2) { // multi choose
-						var allOpts = dom.find('.opts');
-						result = false;
-						var answer = that.answers[that.curr] || {};
-						var answerResult = answer.result || [];
-						var iidx = answerResult.indexOf(selectOpts);
-						if (iidx != -1) {
-							allOpts.eq(i).find('.opts-chs span').removeClass('opt-multi');
-							answerResult.splice(iidx, 1);
-						} else {
-							answerResult.push(selectOpts);
-							allOpts.eq(i).find('.opts-chs span').addClass('opt-multi');
+						r = true;
+						var _a = that.answers[that.current] || {};
+						_a.a = ans;
+						var _ar = _a.r || [];
+						if (_ar.indexOf(s) != -1) {
+							return;
 						}
-						answer.result = answerResult;
-						answer.type = qstn.type;
-						answer.id = qstn.id;
-						if (answerResult.length == anwers.length) {
-							result = true;
-							answerResult = answerResult.sort();
-							$.each(anwers.sort(), function(ii, e) {
-								if (String.fromCharCode(65 + answerResult[ii]) != e) {
-									return (result = false);
+						_ar.push(s);
+						_a.r = _ar;
+						if (_ar.length == ans.length) {
+							_ar = _ar.sort();
+							$.each(ans.sort(), function(ii, e) {
+								if (String.fromCharCode(65 + _ar[ii]) != e) {
+									return (r = false);
 								}
 							});
+							_a.s = r ? qstn.score : 0;
+							_a.d = 1;
+							that.hidea = false;
+							that.answer = ans;
+						} else {
+							var _m = JSON.parse(JSON.stringify(that.multis||{}));
+							_m[i] = true;
+							that.multis = _m;
 						}
-						answer.score = result ? qstn.score : 0;
-						that.answers[that.curr] = answer;
+						_a.t = qstn.type;
+						_a.id = qstn.id;
+						if (i == -1) {
+							_a.d = 1;
+							that.answer = ans;
+						}
+						that.answers[that.current] = _a;
 					}
+					
+					
+					
 				},
 				submit: function() {
-					if (this.finished) {
-						return;
-					}
-					var __I = layer.open({type: 2});
+					if (this.finished) return;
 					this.finished = true;
+					var __I = layer.open({type: 2});
 					var 
 						that = this, 
 						msg = '总题数:' + this.questions.length, 
@@ -409,22 +436,20 @@ display: block!important;
 						}
 						var _ans = that.answers[l];
 						if (_ans) {
-							if (m.type < 4 && _ans.score > 0) {
+							if (m.type < 4 && _ans.s > 0) {
 								r ++;
-								s += _ans.score;
+								s += _ans.s;
 							}
 							data.push({
 								questionId: m.id,
-								answers: JSON.stringify(_ans.result),
-								status: 1,
-								score: _ans.score || 0
+								answers: JSON.stringify(_ans.r),
+								result: m.type < 4 ? _ans.s > 0 ? 2 : 3 : 1 
 							});
 						} else {
 							data.push({
-								questionId: m.id,
+								id: m.id,
 								answers: '',
-								score: 0,
-								status: m.type < 4 ? 1 : 0
+								result: 3
 							});
 						}
 					});
@@ -440,7 +465,7 @@ display: block!important;
 						url: root + '/wx/drill/submit',
 						method: 'POST',
 						data: {
-							type: -1,
+							type: -2,
 							suiteId: $('#suite_id').val(),
 							subjectId: $('#subject_id').val(),
 							score: s,
@@ -448,97 +473,76 @@ display: block!important;
 						},
 						success: function(r) {
 							layer.close(__I);
-							that.end();
-						}, 
-						error: function(r) {
-							
 						}
 					});
 				},
 				releaseMulti: function() {
+					this.multis = {};
+					this.sav();
+					if (this.answers[this.current] && this.answers[this.current].d) {
+						this.hidea = false;
+					} else {
+						this.hidea = true;
+					}
 				},
-				sas: function(idx) {
-					if (this.finished) {
-						return;
-					}
+				sas: function() {
 					var that = this,
-				    qstn = this.questions[this.curr];
-					if (this.answers[this.curr] && this.answers[this.curr].d) {
+					    qstn = this.questions[this.current];
+					if (this.answers[this.current] && this.answers[this.current].d) {
 						return;
 					}
-					this.answers[this.curr] = {
-							result: [$('#solve_result'+idx).val()],
-							score: 0,
+					this.answers[this.current] = {
+							a: '',
+							r: [this.sa],
+							s: 0,
 							d: 1,
-							type: qstn.type,
+							t: qstn.type,
 							id: qstn.id
 					};
-					$('#solve_result'+idx).attr({
-						readonly: 'readonly',
-						disabled: 'disabled'
-					}).addClass('rd');
+					that.hidea = false;
+					this.ro = true;
 				},
-				time: function() {
-					this.timing --;
-					this.timer = this.leftPad(~~(this.timing / 60), 2, 0) + ':' + this.leftPad(this.timing % 60, 2, 0);
-					if (this.timing > 0 && !this.finished) {
-						setTimeout(this.time, 1000);
+				sav: function() {
+					var a = this.answers[this.current]||{};
+					if (a && a.t == 4 && a.d == 1) {
+						this.ro = true;
+						this.sa = a.r[0];
 					} else {
-						this.finished = true;
+						this.ro = false;
+						this.sa = '';
 					}
 				},
-				leftPad: function(v, l, r) {
-					v = null == v ? '' : (v + '');
-					r = null == r ? ' ' : (r + '');
-					while(v.length < l) {
-						v = r + v;
+				joinWrong: function() {
+					if (this.joined[this.current] == 1) {
+						this.msg('已加入错题');
+						return;
 					}
-					return v;
+					var qstn = this.questions[this.current], that = this;
+					$.ajax({
+						url: root + '/wx/wronged/insert',
+						method: 'POST',
+						data: {
+							subjectId: qstn.subjectId,
+							suiteId: qstn.suiteId,
+							questionId: qstn.id,
+							answers: '',
+							cnd: 0
+						},
+						success: function(r) {
+							if (r.code == 200) {
+								that.msg('加入成功');
+								that.joined[that.current] = 1;
+							}
+						}
+					});
 				},
 				home: function() {
 					window.location.href = root + '/wx/home';
-				},
-				end: function() {
-					this.finished = true;
-					this._end(this.curr);
-					for (var i = 0; i < this.questions.length; i ++) {
-						this.curr != i && this._end(i);
-					}
-				},
-				_end: function(idx) {
-					var 
-						that = this,
-						qstn = that.questions[idx],
-						answer = that.answers[idx] || {},
-						answers = JSON.parse(qstn.answers),
-						allOpts = $('#opts'+idx).find('.opts');
-
-					$('#drilled'+idx).show();
-					if (qstn.type < 4) {
-						$.each(answer.result || [], function(_ii, _ee) {
-							var d = allOpts.eq(_ee.charCodeAt(0)-65).find('.opts-chs span');
-							d.html('&times;');
-							d.removeClass('opt-multi').addClass('opt-wrong');
-						});
-						$.each(answers, function(_j, _m) {
-							var d = allOpts.eq(_m.charCodeAt(0)-65).find('.opts-chs span');
-							d.html('&radic;'); 
-							d.removeClass('opt-multi').removeClass('opt-wrong').addClass('opt-right');
-							//allOpts.eq(_m.charCodeAt(0)-65).find('.opts-chs').children().addClass('opt-right');
-						});
-					} else {
-						$('#solve_result'+idx).attr({
-							readonly: 'readonly',
-							disabled: 'disabled'
-						}).addClass('rd');
-					}
 				}
 			},
 			mounted: function() {
 				var that = this;
 				this.$nextTick(function() {
-					that.timing = $('#suite_timing').val()*1;
-					that.time();
 					that.loadQuestions();
 				});
 			}

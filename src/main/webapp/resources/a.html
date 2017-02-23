@@ -1,100 +1,46 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
-
-<title>iScroll demo: carousel</title>
-
-<script type="text/javascript" src="lib/jquery.min.js"></script>
-<script type="text/javascript" src="lib/jquery.touchSwipe.min.js"></script>
-<script type="text/javascript">
-$(function() {
-    var width = 326, index = 0;
-    $("#viewport").swipe( { swipeStatus:swipe2, allowPageScroll:"vertical"} );
-
-    function swipe2(event, phase, direction, distance) {
-      if (direction == 'left') {
-        if (index >= 4 && distance > width / 3) {
-          distance = width / 3;
-        }
-        if (phase == 'end') {
-          if (index < 4) index ++;
-          distance = index * width;
-        } else {
-          distance = ((index * width ) + distance);
-        }
-        $(this).css('margin-left', '-' + distance + 'px');
-      } else if (direction == 'right') {
-        if (index == 0 && distance > width / 3) {
-          distance = width / 3;
-        }
-        if (phase == 'end') {
-          if (index > 0) index --;
-          distance = - index * width;
-        } else {
-          distance = distance - (index * width );
-        }
-        //$(this).animate({'marginLeft': distance + 'px'}, 10);
-        $(this).css('margin-left', distance + 'px');
-        //$("#box").animate({height:"300px"});
-      }
-    }
-});
-</script>
-
-<style type="text/css">
-#scroller {
-	display: flex;
-	position: relative;
-}
-
-#viewport {
-	position: absolute;
-	left: 0;
-	bottom:0;
-	top: 0;
-	right: 0;
-}
-
-.slide {
-	flex-shrink: 0;
-	width: 421px;
-}
-
-#wrapper {
-	position: absolute;
-}
-.viewport {
-   height : 100% ;
-   display : flex;
-   overflow : hidden ;
-   position : relative ;
-}
-.pageview {
-    width: 326px;
-    flex-shrink: 0;
-}
-</style>
+<title>Multipage example</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
 <body>
-<div id="viewport" class="viewport">
-     <div class="pageview" style ="background: #3b76c0">
-         <h3>页面 - 1 </h3>
-     </div>
-     <div class="pageview" style = "background: #58c03b;">
-         <h3>页面 - 2 </h3>
-     </div>
-     <div class ="pageview" style = "background: #c03b25;">
-         <h3>页面 - 3 </h3>
-     </div>
-     <div class = "pageview" style = "background: #e0a718;">
-         <h3>页面 - 4 </h3>
-     </div>
-     <div class = "pageview" style = "background: #c03eac;">
-         <h3>页面 - 5 </h3>
-     </div>
+<div class="ui-page" data-role="page" id="page1" data-title="page1" data-next="page2">
+<div data-role="header">
+<h1>Page 1</h1>
 </div>
+<div role="main" class="ui-content">
+<a href="#page2" data-transition="slide" class="ui-btn ui-corner-all ui-btn-inline">Go To Page 2</a>
+</div>
+</div>
+<div class="ui-page" data-role="page" id="page2" data-title="page2" data-prev="page1">
+<div data-role="header">
+<h1>Page 2</h1>
+</div>
+<div role="main" class="ui-content">
+<a href="#page1" data-rel="back" data-transition="slide" class="ui-btn ui-corner-all ui-btn-inline">Go Back To
+Page 1</a>
+</div>
+</div>
+<script>
+$(document).on("swipeleft", ".ui-page", function () {
+var thePage = $(this),
+next = thePage.jqmData("next");
+if (next) {
+$(":mobile-pagecontainer").pagecontainer("change", "#" + next, {transition: "slide"});
+}
+});
+$(document).on("swiperight", ".ui-page", function () {
+var thePage = $(this),
+prev = thePage.jqmData("prev");
+if (prev) {
+$(":mobile-pagecontainer").pagecontainer("change", "#" + prev, {transition: "slide", reverse: true});
+}
+});
+</script>
 </body>
 </html>

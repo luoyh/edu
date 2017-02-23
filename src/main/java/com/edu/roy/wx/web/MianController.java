@@ -47,9 +47,17 @@ public class MianController extends BaseController {
 		return "index";
 	}
 	
-
 	@RequestMapping(value = "/refresh/config")
 	public ResponseEntity<String> refreshConfig(String password, HttpServletRequest request) {
+		if (StringUtils.isBlank(password) || !password.equals(sysMap().get(Cons.SysKey.REFRESH_CONFIG_PASSWORD.code))) {
+			return ResponseEntity.badRequest().body("u k m?");
+		}
+		sysService.init();
+		return ResponseEntity.<String>ok("success!");
+	}
+
+	@RequestMapping(value = "/current/config")
+	public ResponseEntity<String> currentConfig(String password, HttpServletRequest request) {
 		if (StringUtils.isBlank(password) || !password.equals(sysMap().get(Cons.SysKey.REFRESH_CONFIG_PASSWORD.code))) {
 			return ResponseEntity.badRequest().body("u k m?");
 		}

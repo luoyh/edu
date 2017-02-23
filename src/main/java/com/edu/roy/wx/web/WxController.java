@@ -151,7 +151,7 @@ public class WxController extends BaseController {
 					WxAccessTokenBO watbo = new WxAccessTokenBO();
 					watbo.setAccessToken(accessToken);
 					watbo.setCreated(System.currentTimeMillis());
-					watbo.setExpires((long) trMap.get("expires_in"));
+					watbo.setExpires(Long.parseLong(trMap.get("expires_in").toString()));
 					cache.put(Cons.WX_ACCESS_TOKEN_KEY, new CacheValue<WxAccessTokenBO>(watbo));
 				}
 			}
